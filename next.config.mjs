@@ -1,9 +1,9 @@
-let userConfig = undefined;
+let userConfig = undefined
 try {
-  userConfig = await import('./v0-user-next.config.mjs');
+  userConfig = await import('./v0-user-next.config.mjs')
 } catch (e) {
   try {
-    userConfig = await import('./v0-user-next.config');
+    userConfig = await import('./v0-user-next.config')
   } catch (innerError) {
     // ignore error
   }
@@ -20,10 +20,10 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-};
+}
 
 if (userConfig) {
-  const config = userConfig.default || userConfig;
+  const config = userConfig.default || userConfig
 
   for (const key in config) {
     if (
@@ -33,11 +33,11 @@ if (userConfig) {
       nextConfig[key] = {
         ...nextConfig[key],
         ...config[key],
-      };
+      }
     } else {
-      nextConfig[key] = config[key];
+      nextConfig[key] = config[key]
     }
   }
 }
 
-export default nextConfig;
+export default nextConfig
