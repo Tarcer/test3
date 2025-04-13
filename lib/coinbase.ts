@@ -2,22 +2,31 @@ import { Client } from "coinbase-commerce-node"
 
 // Assurons-nous que la clé API est disponible et valide
 const apiKey = process.env.COINBASE_COMMERCE_API_KEY || ""
+
+// Déclaration de stubClient en dehors des blocs conditionnels
+let coinbaseClient
+const stubClient = {
+  createCharge: async () => {
+    throw new Error("Configuration Coinbase Commerce manquante. Vérifiez votre clé API.")
+  },
+}
+
 if (!apiKey || apiKey.trim() === "") {
   console.error("Clé API Coinbase Commerce manquante ou invalide")
-  // Créer une fonction stub pour éviter les erreurs de runtime
-  const stubClient = {
-    createCharge: async () => {
-      throw new Error("Configuration Coinbase Commerce manquante. Vérifiez votre clé API.")
-    },
-  }
-
   // Exporter le client stub au lieu du vrai client
-  export const coinbaseClient = stubClient;
+  coinbaseClient = stubClient
 } else {
   // Initialiser normalement avec la clé API valide
-  Client.init(apiKey)
-  export const coinbaseClient = Client.resources.Charge;
+  try {
+    Client.init(apiKey)
+    coinbaseClient = Client.resources.Charge
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation de Coinbase Commerce:", error)
+    coinbaseClient = stubClient
+  }
 }
+
+export { coinbaseClient }
 
 // Fonction pour formater les données de charge
 export function formatChargeData(

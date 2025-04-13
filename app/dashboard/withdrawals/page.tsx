@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { InfoIcon } from 'lucide-react'
+import { InfoIcon } from "lucide-react"
 import WithdrawalForm from "@/components/withdrawal-form"
 import WithdrawalHistory from "@/components/withdrawal-history"
 

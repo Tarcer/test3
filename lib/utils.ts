@@ -84,11 +84,11 @@ export function getDatesBetween(startDate: Date, endDate: Date): string[] {
 export function getCommissionRate(level: number): number {
   switch (level) {
     case 1:
-      return 0.005 // 0.5%
+      return 0.01 // 1%
     case 2:
-      return 0.003 // 0.3%
+      return 0.005 // 0.5%
     case 3:
-      return 0.001 // 0.1%
+      return 0.0025 // 0.25%
     default:
       return 0
   }

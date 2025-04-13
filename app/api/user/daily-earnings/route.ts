@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     // Récupérer les revenus pour cette journée spécifique
     const { data: earnings, error: earningsError } = await supabase
       .from("earnings")
-      .select("amount, status, created_at")
+      .select("amount, day_number, created_at, status")
       .eq("user_id", userId)
       .gte("created_at", startOfDay.toISOString())
       .lte("created_at", endOfDay.toISOString())
@@ -86,10 +86,10 @@ export async function GET(request: NextRequest) {
     // Ajouter un log pour le total
     console.log(`Total des revenus pour ${userId} le ${date}:`, totalEarnings)
 
-    // Faire de même pour les commissions
+    // Récupérer les commissions d'affiliation pour la période spécifiée
     const { data: commissions, error: commissionsError } = await supabase
       .from("affiliate_commissions")
-      .select("amount, status, created_at")
+      .select("amount, level, created_at")
       .eq("user_id", userId)
       .gte("created_at", startOfDay.toISOString())
       .lte("created_at", endOfDay.toISOString())

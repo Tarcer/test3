@@ -168,7 +168,7 @@ export async function processAffiliateCommissionsSimple(userId: string, purchase
           purchase_id: purchaseId,
           amount: commissionAmount,
           level,
-          status: "completed",
+          status: "pending",
         })
         .select()
         .single()

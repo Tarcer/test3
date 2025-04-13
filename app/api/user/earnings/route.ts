@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     // Récupérer les commissions d'affiliation pour la période spécifiée
     const { data: commissions, error: commissionsError } = await supabase
       .from("affiliate_commissions")
-      .select("amount, level, created_at, status")
+      .select("amount, level, created_at")
       .eq("user_id", userId)
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true })

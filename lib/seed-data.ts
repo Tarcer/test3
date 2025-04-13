@@ -195,9 +195,9 @@ export async function seedSystemSettings() {
     {
       key: "affiliateCommissions",
       value: {
-        level1: 0.5, // 0.5%
-        level2: 0.3, // 0.3%
-        level3: 0.1, // 0.1%
+        level1: 1, // 1%
+        level2: 0.5, // 0.5%
+        level3: 0.25, // 0.25%
       },
     },
   ]

@@ -75,7 +75,7 @@ export default function AffiliateProgramPage() {
                   <CardDescription>Filleuls directs</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-4xl font-bold text-primary">0.5%</p>
+                  <p className="text-4xl font-bold text-primary">1%</p>
                   <p className="mt-2 text-muted-foreground">
                     Sur tous les achats effectués par les utilisateurs que vous avez directement parrainés.
                   </p>
@@ -87,7 +87,7 @@ export default function AffiliateProgramPage() {
                   <CardDescription>Filleuls de vos filleuls</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-4xl font-bold text-primary">0.3%</p>
+                  <p className="text-4xl font-bold text-primary">0.5%</p>
                   <p className="mt-2 text-muted-foreground">
                     Sur tous les achats effectués par les filleuls de vos filleuls directs.
                   </p>
@@ -99,7 +99,7 @@ export default function AffiliateProgramPage() {
                   <CardDescription>Filleuls de niveau 3</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-4xl font-bold text-primary">0.1%</p>
+                  <p className="text-4xl font-bold text-primary">0.25%</p>
                   <p className="mt-2 text-muted-foreground">
                     Sur tous les achats effectués par les filleuls de vos filleuls de niveau 2.
                   </p>
@@ -126,20 +126,20 @@ export default function AffiliateProgramPage() {
                     <h3 className="text-lg font-semibold mb-2">Vos Commissions</h3>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span>Niveau 1 (0.5% de 500 €)</span>
-                        <span className="font-medium">2.50 €</span>
+                        <span>Niveau 1 (1% de 500 €)</span>
+                        <span className="font-medium">5.00 €</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Niveau 2 (0.3% de 300 €)</span>
-                        <span className="font-medium">0.90 €</span>
+                        <span>Niveau 2 (0.5% de 300 €)</span>
+                        <span className="font-medium">1.50 €</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Niveau 3 (0.1% de 200 €)</span>
-                        <span className="font-medium">0.20 €</span>
+                        <span>Niveau 3 (0.25% de 200 €)</span>
+                        <span className="font-medium">0.50 €</span>
                       </div>
                       <div className="border-t pt-2 mt-2 flex justify-between font-bold">
                         <span>Total</span>
-                        <span>3.60 €</span>
+                        <span>7.00 €</span>
                       </div>
                     </div>
                   </div>

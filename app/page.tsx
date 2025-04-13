@@ -41,7 +41,7 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold">Revenus Quotidiens</h3>
             <p className="text-muted-foreground">
-              Recevez 1/45 du prix d'achat chaque jour pendant 360 jours après votre achat.
+              Recevez 1/45 du prix d'achat chaque jour pendant 45 jours après votre achat.
             </p>
           </div>
           <div className="flex flex-col items-center gap-2 text-center">

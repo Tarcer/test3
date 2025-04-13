@@ -5,8 +5,14 @@ import type { Database } from "./database.types"
 export async function createServerSupabaseClient() {
   // This function can only be used in server components or server actions
   // Make sure this is only imported in server components or server actions
-  const cookieStore = cookies()
-  return createServerComponentClient<Database>({ cookies: () => cookieStore })
+  try {
+    const cookieStore = cookies()
+    return createServerComponentClient<Database>({ cookies: () => cookieStore })
+  } catch (e) {
+    console.error("Error creating Supabase client:", e)
+    // Fallback to a client-side approach or return a limited client
+    return null // Or a suitable fallback
+  }
 }
 
 // Add a client-safe version for client components
