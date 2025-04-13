@@ -7,7 +7,7 @@ const apiKey = process.env.COINBASE_COMMERCE_API_KEY || ""
 let coinbaseClient
 const stubClient = {
   createCharge: async () => {
-    throw new Error("Configuration Coinbase Commerce manquante. Vérifiez votre clé API.")
+    throw new Error("Coinbase Commerce is not properly configured. Check your API key.")
   },
 }
 
