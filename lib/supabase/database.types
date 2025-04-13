@@ -56,6 +56,7 @@ export interface Database {
           demo_url: string | null
           created_at: string
           updated_at: string
+          long_description: string | null
         }
         Insert: {
           id?: string
@@ -68,6 +69,7 @@ export interface Database {
           demo_url?: string | null
           created_at?: string
           updated_at?: string
+          long_description?: string | null
         }
         Update: {
           id?: string
@@ -80,6 +82,7 @@ export interface Database {
           demo_url?: string | null
           created_at?: string
           updated_at?: string
+          long_description?: string | null
         }
       }
       purchases: {
@@ -91,6 +94,7 @@ export interface Database {
           status: string
           created_at: string
           transaction_id: string | null
+          last_validated_at: string | null
         }
         Insert: {
           id?: string
@@ -100,6 +104,7 @@ export interface Database {
           status?: string
           created_at?: string
           transaction_id?: string | null
+          last_validated_at?: string | null
         }
         Update: {
           id?: string
@@ -109,6 +114,7 @@ export interface Database {
           status?: string
           created_at?: string
           transaction_id?: string | null
+          last_validated_at?: string | null
         }
       }
       earnings: {
