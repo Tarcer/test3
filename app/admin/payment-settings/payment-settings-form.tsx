@@ -156,7 +156,8 @@ export default function PaymentSettingsForm({ initialSettings }: PaymentSettings
               <div className="flex items-center space-x-2">
                 <Switch
                   id="direct-enabled"
-                  checked={settings.directCrypto.enabled}
+                  checked={false}
+                  disabled
                   onCheckedChange={(checked) =>
                     setSettings({
                       ...settings,
@@ -226,4 +227,18 @@ export default function PaymentSettingsForm({ initialSettings }: PaymentSettings
       </div>
     </form>
   )
+}
+PaymentSettingsForm.defaultProps = {
+  initialSettings: {
+    coinbaseCommerce: {
+      enabled: true,
+      displayName: "Carte bancaire (via Coinbase)",
+      cryptoCurrency: "USDT",
+    },
+    directCrypto: {
+      enabled: false,
+      displayName: "Paiement direct en crypto",
+      walletAddress: "",
+    },
+  },
 }
