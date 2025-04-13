@@ -17,10 +17,10 @@ export default function EarningsCalculator() {
   useEffect(() => {
     const daily = purchasePrice / 45
     setDailyEarnings(daily)
-    setTotalEarnings(daily * 45)
+    setTotalEarnings(daily * 360)
 
     // Net profit after 10% withdrawal fee
-    const gross = daily * 45
+    const gross = daily * 360
     const fee = gross * 0.1
     setNetProfit(gross - fee)
   }, [purchasePrice])
@@ -45,7 +45,7 @@ export default function EarningsCalculator() {
                 <Slider
                   id="purchase-price-slider"
                   min={100}
-                  max={2000}
+                  max={3000}
                   step={50}
                   value={[purchasePrice]}
                   onValueChange={handlePriceChange}
@@ -54,7 +54,7 @@ export default function EarningsCalculator() {
                   id="purchase-price"
                   type="number"
                   min={100}
-                  max={2000}
+                  max={3000}
                   value={purchasePrice}
                   onChange={handleInputChange}
                   className="w-24"

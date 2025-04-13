@@ -23,7 +23,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Cache pour stocker les données utilisateur
+// Cache for storing user data
 let userCache: User | null = null
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -31,12 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  // Initialiser l'authentification au chargement
+  // Initialize authentication on load
   useEffect(() => {
-    // Vérifier la session actuelle
+    // Check current session
     const checkSession = async () => {
       try {
-        // Si nous avons déjà un cache utilisateur, utilisons-le immédiatement
+        // If we already have a user cache, use it immediately
         if (userCache) {
           setUser(userCache)
           setIsLoading(false)
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data } = await supabaseClient.auth.getSession()
 
         if (data.session?.user) {
-          // Utiliser une seule requête pour obtenir les données utilisateur
+          // Use a single query to get user data
           const { data: userData, error } = await supabaseClient
             .from("users")
             .select("id, email, name, referral_code, referred_by, solana_usdt_address")
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               solanaUsdtAddress: userData.solana_usdt_address || undefined,
             }
 
-            // Mettre à jour le cache et l'état
+            // Update cache and state
             userCache = formattedUser
             setUser(formattedUser)
           }
@@ -77,10 +77,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkSession()
 
-    // Configurer l'écouteur pour les changements d'état d'authentification
+    // Set up listener for auth state changes
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
-        // Éviter de refaire une requête si nous avons déjà les données utilisateur
+        // Avoid making another request if we already have user data
         if (userCache && userCache.id === session.user.id) {
           setUser(userCache)
           return
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               solanaUsdtAddress: data.solana_usdt_address || undefined,
             }
 
-            // Mettre à jour le cache et l'état
+            // Update cache and state
             userCache = formattedUser
             setUser(formattedUser)
           }
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  // Connexion
+  // Sign in
   const signIn = async (email: string, password: string) => {
     try {
       setIsLoading(true)
@@ -146,12 +146,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Déconnexion
+  // Sign out
   const signOut = async () => {
     try {
       await supabaseClient.auth.signOut()
       userCache = null
-      router.push("/") // Rediriger vers la page d'accueil après la déconnexion
+      router.push("/") // Redirect to home page after sign out
     } catch (error) {
       console.error("Sign out error:", error)
     }
@@ -164,7 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
   }
 
-  return <AuthContext.Provider value={value as AuthContextType}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ ...value } as AuthContextType}>{children}</AuthContext.Provider> 
 }
 
 export function useAuth() {

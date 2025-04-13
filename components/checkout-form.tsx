@@ -211,7 +211,7 @@ export default function CheckoutForm({ items, total }: CheckoutFormProps) {
             <span className="font-medium">Votre solde</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold">{userBalance.toFixed(2)} €</span>
+            <span className="text-xl font-bold">{userBalance !== null ? userBalance.toFixed(2) : "0.00"} €</span>
             <Button
               variant="ghost"
               size="sm"

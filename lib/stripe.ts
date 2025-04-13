@@ -6,18 +6,18 @@ export const stripe = {
   checkout: {
     sessions: {
       create: async () => {
-        throw new Error("Stripe n'est plus utilisé dans cette application. Utilisez Coinbase Commerce à la place.")
+        throw new Error("Cette fonctionnalité a été désactivée.")
       },
     },
   },
   balance: {
     retrieve: async () => {
-      throw new Error("Stripe n'est plus utilisé dans cette application. Utilisez Coinbase Commerce à la place.")
+      throw new Error("Cette fonctionnalité a été désactivée.")
     },
   },
   webhooks: {
     constructEvent: () => {
-      throw new Error("Stripe n'est plus utilisé dans cette application. Utilisez Coinbase Commerce à la place.")
+      throw new Error("Cette fonctionnalité a été désactivée.")
     },
   },
 }

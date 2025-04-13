@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import AccountSettingsClient from "./account-settings-client"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Paramètres du compte",
   description: "Gérez vos paramètres et préférences de compte",

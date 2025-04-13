@@ -25,11 +25,6 @@ export default async function PaymentSettingsPage() {
     .single()
 
   const defaultSettings = {
-    coinbaseCommerce: {
-      enabled: true,
-      displayName: "Carte bancaire (via Coinbase)",
-      cryptoCurrency: "USDT",
-    },
     directCrypto: {
       enabled: true,
       displayName: "Paiement direct en crypto",

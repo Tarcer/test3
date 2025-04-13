@@ -61,11 +61,9 @@
     "immer": "latest",
     "use-sync-external-store": "latest",
     "@supabase/supabase-js": "latest",
-    "uuid": "latest",
     "zustand": "latest",
     "@supabase/auth-helpers-nextjs": "latest",
-    "crypto": "latest",
-    "coinbase-commerce-node": "latest"
+    "uuid": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -3,8 +3,6 @@ import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import { v4 as uuidv4 } from "uuid"
 import type { Database } from "@/lib/supabase/database.types"
-import { processAffiliateCommissionsSimple } from "@/lib/services/affiliate-service-simple"
-
 // Ajouter l'import pour les événements
 import { emitTransactionEvent } from "@/lib/events/transaction-events"
 
@@ -128,17 +126,6 @@ export async function POST(request: Request) {
         }
 
         purchaseIds.push(purchaseId)
-
-        // Traiter les commissions d'affiliation pour chaque achat
-        console.log(`Traitement des commissions pour l'achat ${purchaseId}`)
-        const commissionResult = await processAffiliateCommissionsSimple(userId, purchaseId, item.price * item.quantity)
-
-        if (!commissionResult.success) {
-          console.warn(`Avertissement: problème lors du traitement des commissions:`, commissionResult.error)
-          // Ne pas bloquer l'achat si les commissions échouent
-        } else {
-          console.log(`Résultat du traitement des commissions:`, commissionResult)
-        }
       }
 
       // Créer la transaction de solde

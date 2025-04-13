@@ -132,16 +132,16 @@ export async function getUserReferrals(userId: string) {
     const { data: level1Referrals, error: level1Error } = await supabase
       .from("users")
       .select(`
-       id,
-       name,
-       email,
-       created_at,
-       purchases:purchases (
-         id,
-         amount,
-         created_at
-       )
-     `)
+      id,
+      name,
+      email,
+      created_at,
+      purchases:purchases (
+        id,
+        amount,
+        created_at
+      )
+    `)
       .eq("referred_by", referralCode)
 
     if (level1Error) {
@@ -168,16 +168,16 @@ export async function getUserReferrals(userId: string) {
       const { data: level2Data, error: level2Error } = await supabase
         .from("users")
         .select(`
-         id,
-         name,
-         email,
-         created_at,
-         purchases:purchases (
-           id,
-           amount,
-           created_at
-         )
-       `)
+        id,
+        name,
+        email,
+        created_at,
+        purchases:purchases (
+          id,
+          amount,
+          created_at
+        )
+      `)
         .eq("referred_by", level1ReferralCode)
 
       if (level2Error) {
@@ -207,16 +207,16 @@ export async function getUserReferrals(userId: string) {
       const { data: level3Data, error: level3Error } = await supabase
         .from("users")
         .select(`
-         id,
-         name,
-         email,
-         created_at,
-         purchases:purchases (
-           id,
-           amount,
-           created_at
-         )
-       `)
+        id,
+        name,
+        email,
+        created_at,
+        purchases:purchases (
+          id,
+          amount,
+          created_at
+        )
+      `)
         .eq("referred_by", level2ReferralCode)
 
       if (level3Error) {

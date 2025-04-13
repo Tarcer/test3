@@ -9,18 +9,12 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 import { updatePaymentSettings } from "./actions"
 
 interface PaymentSettingsFormProps {
   initialSettings: {
-    coinbaseCommerce: {
-      enabled: boolean
-      displayName: string
-      cryptoCurrency: string
-    }
     directCrypto: {
       enabled: boolean
       displayName: string
@@ -63,86 +57,10 @@ export default function PaymentSettingsForm({ initialSettings }: PaymentSettings
 
   return (
     <form onSubmit={handleSubmit}>
-      <Tabs defaultValue="coinbase" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="coinbase">Coinbase Commerce</TabsTrigger>
+      <Tabs defaultValue="direct" className="w-full">
+        <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="direct">Paiement direct en crypto</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="coinbase" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configuration Coinbase Commerce</CardTitle>
-              <CardDescription>
-                Configurez les paramètres pour accepter les paiements par carte bancaire via Coinbase Commerce
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="coinbase-enabled"
-                  checked={settings.coinbaseCommerce.enabled}
-                  onCheckedChange={(checked) =>
-                    setSettings({
-                      ...settings,
-                      coinbaseCommerce: {
-                        ...settings.coinbaseCommerce,
-                        enabled: checked,
-                      },
-                    })
-                  }
-                />
-                <Label htmlFor="coinbase-enabled">Activer les paiements via Coinbase Commerce</Label>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="coinbase-display-name">Nom affiché</Label>
-                <Input
-                  id="coinbase-display-name"
-                  value={settings.coinbaseCommerce.displayName}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      coinbaseCommerce: {
-                        ...settings.coinbaseCommerce,
-                        displayName: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="coinbase-crypto-currency">Crypto-monnaie de réception</Label>
-                <Select
-                  value={settings.coinbaseCommerce.cryptoCurrency}
-                  onValueChange={(value) =>
-                    setSettings({
-                      ...settings,
-                      coinbaseCommerce: {
-                        ...settings.coinbaseCommerce,
-                        cryptoCurrency: value,
-                      },
-                    })
-                  }
-                >
-                  <SelectTrigger id="coinbase-crypto-currency">
-                    <SelectValue placeholder="Sélectionnez une crypto-monnaie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-                    <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-                    <SelectItem value="USDT">Tether (USDT)</SelectItem>
-                    <SelectItem value="USDC">USD Coin (USDC)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  La crypto-monnaie dans laquelle vous souhaitez recevoir les paiements
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="direct" className="mt-4">
           <Card>
@@ -156,8 +74,7 @@ export default function PaymentSettingsForm({ initialSettings }: PaymentSettings
               <div className="flex items-center space-x-2">
                 <Switch
                   id="direct-enabled"
-                  checked={false}
-                  disabled
+                  checked={settings.directCrypto.enabled}
                   onCheckedChange={(checked) =>
                     setSettings({
                       ...settings,
@@ -228,15 +145,11 @@ export default function PaymentSettingsForm({ initialSettings }: PaymentSettings
     </form>
   )
 }
+
 PaymentSettingsForm.defaultProps = {
   initialSettings: {
-    coinbaseCommerce: {
-      enabled: true,
-      displayName: "Carte bancaire (via Coinbase)",
-      cryptoCurrency: "USDT",
-    },
     directCrypto: {
-      enabled: false,
+      enabled: true,
       displayName: "Paiement direct en crypto",
       walletAddress: "",
     },

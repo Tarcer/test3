@@ -11,7 +11,6 @@ import {
   Calendar,
   CreditCard,
   DollarSign,
-  Download,
   LayoutDashboard,
   Settings,
   Wallet,
@@ -153,17 +152,6 @@ export default function AdminNav({ className, isCollapsed = false, ...props }: A
         {!isCollapsed && <span>Paramètres crypto</span>}
       </Link>
       <Link
-        href="/admin/webhook-setup"
-        className={cn(
-          buttonVariants({ variant: "ghost" }),
-          pathname === "/admin/webhook-setup" ? "bg-muted hover:bg-muted" : "hover:bg-transparent hover:underline",
-          "justify-start",
-        )}
-      >
-        <Download className={cn("mr-2  h-4 w-4", isCollapsed && "mr-0")} />
-        {!isCollapsed && <span>Configuration Webhook</span>}
-      </Link>
-      <Link
         href="/admin/api-status"
         className={cn(
           buttonVariants({ variant: "ghost" }),
@@ -173,17 +161,6 @@ export default function AdminNav({ className, isCollapsed = false, ...props }: A
       >
         <AlertCircle className={cn("mr-2 h-4 w-4", isCollapsed && "mr-0")} />
         {!isCollapsed && <span>État des API</span>}
-      </Link>
-      <Link
-        href="/admin/coinbase-test"
-        className={cn(
-          buttonVariants({ variant: "ghost" }),
-          pathname === "/admin/coinbase-test" ? "bg-muted hover:bg-muted" : "hover:bg-transparent hover:underline",
-          "justify-start",
-        )}
-      >
-        <CreditCard className={cn("mr-2 h-4 w-4", isCollapsed && "mr-0")} />
-        {!isCollapsed && <span>Test Coinbase</span>}
       </Link>
       <Link
         href="/admin/manual-operations"

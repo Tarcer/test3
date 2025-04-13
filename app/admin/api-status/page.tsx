@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle, AlertCircle, RefreshCw } from "lucide-react"
+import { RefreshCw, CheckCircle, AlertCircle } from "lucide-react"
 import { checkApiHealth } from "@/lib/services/api-health-check"
 
 export default function ApiStatusPage() {
@@ -55,32 +55,6 @@ export default function ApiStatusPage() {
         </div>
       ) : status ? (
         <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Coinbase Commerce API
-                <Badge variant={status.coinbase ? "success" : "destructive"}>
-                  {status.coinbase ? "Opérationnel" : "Problème détecté"}
-                </Badge>
-              </CardTitle>
-              <CardDescription>État de la connexion à l'API Coinbase Commerce</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {status.coinbase ? (
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle className="h-5 w-5" />
-                  <span>L'API Coinbase Commerce est correctement configurée et opérationnelle.</span>
-                </div>
-              ) : (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Erreur de connexion à Coinbase Commerce</AlertTitle>
-                  <AlertDescription>Vérifiez votre clé API et votre configuration Coinbase Commerce.</AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

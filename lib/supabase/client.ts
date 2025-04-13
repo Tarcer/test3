@@ -3,7 +3,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import type { Database } from "@/lib/supabase/database.types"
 
-// Créer une seule instance globale du client Supabase
+// Create a single global instance of the Supabase client
 const supabaseClient = createClientComponentClient<Database>()
 
 export { supabaseClient }

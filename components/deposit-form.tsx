@@ -6,12 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CheckCircle, AlertCircle, Loader2, CreditCard, Wallet } from "lucide-react"
+import { CheckCircle, AlertCircle, Loader2, Wallet } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/supabase/auth"
 import { createDeposit } from "@/lib/services/deposit-service"
@@ -31,20 +30,6 @@ const manualDepositSchema = z.object({
   transactionHash: z.string().min(1, "Le hash de transaction est requis"),
 })
 
-const cardDepositSchema = z.object({
-  amount: z
-    .string()
-    .refine((val) => !isNaN(Number.parseFloat(val)), {
-      message: "Le montant doit être un nombre",
-    })
-    .refine((val) => Number.parseFloat(val) >= 10, {
-      message: "Le montant minimum est de 10 €",
-    })
-    .refine((val) => Number.parseFloat(val) <= 10000, {
-      message: "Le montant maximum est de 10 000 €",
-    }),
-})
-
 export default function DepositForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,13 +47,6 @@ export default function DepositForm() {
     defaultValues: {
       amount: "",
       transactionHash: "",
-    },
-  })
-
-  const cardForm = useForm<z.infer<typeof cardDepositSchema>>({
-    resolver: zodResolver(cardDepositSchema),
-    defaultValues: {
-      amount: "",
     },
   })
 
@@ -119,70 +97,6 @@ export default function DepositForm() {
     }
   }
 
-  async function onCardSubmit(values: z.infer<typeof cardDepositSchema>) {
-    if (!user) {
-      toast({
-        title: "Erreur",
-        description: "Vous devez être connecté pour effectuer un dépôt",
-        variant: "destructive",
-      })
-      return
-    }
-
-    // Check if Coinbase API key is configured
-    if (!process.env.NEXT_PUBLIC_COINBASE_COMMERCE_API_KEY) {
-      toast({
-        title: "Erreur de configuration",
-        description: "Configuration Coinbase Commerce manquante. Vérifiez votre clé API.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const amount = Number.parseFloat(values.amount)
-
-      // Créer une session de paiement Coinbase Commerce
-      const response = await fetch("/api/payment/create-card-deposit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount,
-          userId: user.id,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`)
-      }
-
-      const data = await response.json()
-
-      // Rediriger vers la page de paiement Coinbase
-      if (data.hostedUrl) {
-        window.location.href = data.hostedUrl
-      } else {
-        throw new Error("URL de paiement non disponible")
-      }
-    } catch (error: any) {
-      console.error("Erreur lors du dépôt par carte:", error)
-      setError(error.message || "Une erreur est survenue lors du dépôt")
-      toast({
-        title: "Erreur de dépôt",
-        description: error.message || "Une erreur est survenue lors du dépôt",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -217,125 +131,60 @@ export default function DepositForm() {
           </Alert>
         )}
 
-        <Tabs defaultValue="card" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="card">
-              <CreditCard className="mr-2 h-4 w-4" />
-              Carte Bancaire
-            </TabsTrigger>
-            <TabsTrigger value="manual">
-              <Wallet className="mr-2 h-4 w-4" />
-              Crypto Manuel
-            </TabsTrigger>
-          </TabsList>
+        <div className="rounded-md border p-4 mb-4 bg-muted/30">
+          <h3 className="font-medium mb-2">Dépôt manuel en cryptomonnaie</h3>
+          <p className="text-sm text-muted-foreground">
+            Envoyez des cryptomonnaies directement et soumettez le hash de transaction pour validation. Ce processus
+            nécessite une validation manuelle par un administrateur.
+          </p>
+        </div>
 
-          <TabsContent value="card" className="mt-4">
-            <div className="rounded-md border p-4 mb-4 bg-muted/30">
-              <h3 className="font-medium mb-2">Paiement par carte bancaire</h3>
-              <p className="text-sm text-muted-foreground">
-                Payez avec votre carte bancaire et les fonds seront automatiquement convertis en crypto et ajoutés à
-                votre compte. Le traitement est immédiat et sécurisé via Coinbase Commerce.
-              </p>
-            </div>
-
-            <Form {...cardForm}>
-              <form onSubmit={cardForm.handleSubmit(onCardSubmit)} className="space-y-6">
-                <FormField
-                  control={cardForm.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Montant (€)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="100" {...field} type="number" min="10" step="1" />
-                      </FormControl>
-                      <FormDescription>Entrez le montant que vous souhaitez déposer (minimum 10 €)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Traitement en cours...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Payer par carte bancaire
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </TabsContent>
-
-          <TabsContent value="manual" className="mt-4">
-            <div className="rounded-md border p-4 mb-4 bg-muted/30">
-              <h3 className="font-medium mb-2">Dépôt manuel en cryptomonnaie</h3>
-              <p className="text-sm text-muted-foreground">
-                Envoyez des cryptomonnaies directement et soumettez le hash de transaction pour validation. Ce processus
-                nécessite une validation manuelle par un administrateur.
-              </p>
-            </div>
-
-            <Form {...manualForm}>
-              <form onSubmit={manualForm.handleSubmit(onManualSubmit)} className="space-y-6">
-                <FormField
-                  control={manualForm.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Montant (€)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="100" {...field} type="number" min="10" step="1" />
-                      </FormControl>
-                      <FormDescription>Entrez le montant que vous souhaitez déposer (minimum 10 €)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={manualForm.control}
-                  name="transactionHash"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hash de transaction</FormLabel>
-                      <FormControl>
-                        <Input placeholder="0x1234..." {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Entrez le hash de transaction de votre paiement en crypto-monnaie
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Traitement en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Wallet className="mr-2 h-4 w-4" />
-                      Soumettre le dépôt manuel
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </TabsContent>
-        </Tabs>
+        <Form {...manualForm}>
+          <form onSubmit={manualForm.handleSubmit(onManualSubmit)} className="space-y-6">
+            <FormField
+              control={manualForm.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Montant (€)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="100" {...field} type="number" min="10" step="1" />
+                  </FormControl>
+                  <FormDescription>Entrez le montant que vous souhaitez déposer (minimum 10 €)</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={manualForm.control}
+              name="transactionHash"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hash de transaction</FormLabel>
+                  <FormControl>
+                    <Input placeholder="0x1234..." {...field} />
+                  </FormControl>
+                  <FormDescription>Entrez le hash de transaction de votre paiement en crypto-monnaie</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Traitement en cours...
+                </>
+              ) : (
+                <>
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Soumettre le dépôt manuel
+                </>
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter className="flex flex-col items-start">
-        <p className="text-sm text-muted-foreground">
-          Les paiements par carte sont traités via Coinbase Commerce et convertis automatiquement en cryptomonnaie. Les
-          dépôts manuels nécessitent une validation par un administrateur.
-        </p>
-      </CardFooter>
     </Card>
   )
 }

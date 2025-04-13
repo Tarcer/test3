@@ -9,37 +9,33 @@ import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
-// Ajouter l'import pour l'initialisation des événements
+// Add import for event initialization
 import { initializeTransactionEvents } from "@/lib/events/transaction-events"
 import { useEffect } from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
-// Modifier le composant RootLayout pour initialiser les événements
+// Modify RootLayout component to initialize events
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Initialiser le système d'événements
+  // Initialize event system
   useEffect(() => {
     initializeTransactionEvents()
   }, [])
 
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Toaster />
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <AuthProvider>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster />
+        </div>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

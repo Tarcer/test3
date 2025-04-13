@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle } from "lucide-react"
 import { useCart } from "@/lib/cart"
 
 // Événement personnalisé pour la mise à jour du solde
@@ -27,9 +26,7 @@ export default function PaymentSuccessPage() {
     <div className="container flex items-center justify-center py-12">
       <Card className="mx-auto max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center">
-            <CheckCircle className="h-16 w-16 text-green-500" />
-          </div>
+          <div className="flex justify-center"></div>
           <CardTitle className="mt-4 text-2xl">Paiement réussi !</CardTitle>
           <CardDescription>Votre commande a été traitée avec succès.</CardDescription>
         </CardHeader>

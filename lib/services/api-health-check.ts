@@ -5,34 +5,8 @@
  */
 export async function checkApiHealth() {
   const results = {
-    coinbase: false,
     supabase: false,
     errors: [] as string[],
-  }
-
-  // Vérifier Coinbase
-  try {
-    const apiKey = process.env.COINBASE_COMMERCE_API_KEY
-    if (!apiKey || apiKey.trim() === "") {
-      throw new Error("Clé API Coinbase Commerce manquante")
-    }
-
-    // Faire une requête simple vers l'API Coinbase (sans créer de vraie charge)
-    const response = await fetch("https://api.commerce.coinbase.com/charges", {
-      method: "GET",
-      headers: {
-        "X-CC-Api-Key": apiKey,
-        "X-CC-Version": "2018-03-22",
-      },
-    })
-
-    if (response.ok) {
-      results.coinbase = true
-    } else {
-      results.errors.push(`Coinbase API error: ${response.status} - ${response.statusText}`)
-    }
-  } catch (error: any) {
-    results.errors.push(`Coinbase check failed: ${error.message}`)
   }
 
   // Vérifier Supabase

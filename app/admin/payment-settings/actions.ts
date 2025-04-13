@@ -4,11 +4,6 @@ import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
 interface PaymentSettings {
-  coinbaseCommerce: {
-    enabled: boolean
-    displayName: string
-    cryptoCurrency: string
-  }
   directCrypto: {
     enabled: boolean
     displayName: string
