@@ -8,13 +8,13 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-16 pb-16">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-background to-muted">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-[#09090b] to-[#1a1a1c]">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center gap-6 text-center">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-white">
               Achetez des Sites Web et Gagnez des Revenus Quotidiens
             </h1>
-            <p className="max-w-[700px] text-muted-foreground md:text-xl">
+            <p className="max-w-[700px] text-muted-foreground md:text-xl text-gray-400">
               Notre plateforme unique vous permet d'acheter des sites web prêts à l'emploi et de recevoir des revenus
               quotidiens pendant 45 jours.
             </p>
