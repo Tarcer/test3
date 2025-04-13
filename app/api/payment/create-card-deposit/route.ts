@@ -14,39 +14,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Vous devez être connecté pour effectuer un paiement" }, { status: 401 })
     }
 
-    const { productId, productName, productPrice, successUrl, cancelUrl } = await request.json()
+    const { amount } = await request.json()
 
-    if (!productId || !productName || !productPrice || !successUrl || !cancelUrl) {
-      return NextResponse.json({ error: "Informations de produit manquantes" }, { status: 400 })
+    if (!amount) {
+      return NextResponse.json({ error: "Informations de dépôt manquantes" }, { status: 400 })
     }
 
     // Création d'un identifiant unique pour le paiement
     const paymentId = uuidv4()
 
     // Création d'une charge Coinbase Commerce
+    // Since this is a deposit, we'll use generic names and descriptions
     const charge = await coinbaseClient.createCharge({
-      name: productName,
-      description: `Achat de ${productName} sur WebMarket Pro`,
+      name: "Dépôt sur WebMarket Pro",
+      description: `Dépôt de fonds sur WebMarket Pro`,
       pricing_type: "fixed_price",
       local_price: {
-        amount: productPrice,
+        amount: amount.toString(),
         currency: "EUR",
       },
       metadata: {
-        productId,
         userId: session.user.id,
         paymentId,
       },
-      redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}${successUrl}?charge_id=${paymentId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}${cancelUrl}`,
+      redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment/success?charge_id=${paymentId}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment/cancel`,
     })
 
     // Enregistrer la référence de paiement dans la base de données
     await supabase.from("payment_references").insert({
       id: paymentId,
       user_id: session.user.id,
-      product_id: productId,
-      amount: productPrice,
+      product_id: "deposit", // Using "deposit" as a generic product ID
+      amount: Number(amount),
       charge_id: charge.data.id,
       status: "pending",
     })

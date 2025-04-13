@@ -38,6 +38,16 @@ export default function PaymentButton({
       return
     }
 
+    // Check if Coinbase API key is configured
+    if (!process.env.NEXT_PUBLIC_COINBASE_COMMERCE_API_KEY) {
+      toast({
+        title: "Erreur de configuration",
+        description: "Configuration Coinbase Commerce manquante. Vérifiez votre clé API.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
 
     try {
