@@ -63,7 +63,7 @@ export default function EarningsCalculator() {
             </div>
             <div className="space-y-2">
               <Label>Période de rémunération</Label>
-              <p className="text-sm text-muted-foreground">45 jours (fixe)</p>
+              <p className="text-sm text-muted-foreground">360 jours (fixe)</p>
             </div>
             <div className="space-y-2">
               <Label>Frais de retrait</Label>
@@ -76,7 +76,7 @@ export default function EarningsCalculator() {
               <p className="mt-2 text-2xl font-bold text-primary">{dailyEarnings.toFixed(2)} €</p>
             </div>
             <div className="rounded-lg border p-4">
-              <h3 className="font-medium">Revenu total (45 jours)</h3>
+              <h3 className="font-medium">Revenu total (360 jours)</h3>
               <p className="mt-2 text-2xl font-bold">{totalEarnings.toFixed(2)} €</p>
             </div>
             <div className="rounded-lg border p-4">

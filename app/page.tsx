@@ -16,7 +16,7 @@ export default function Home() {
             </h1>
             <p className="max-w-[700px] text-muted-foreground md:text-xl text-gray-400">
               Notre plateforme unique vous permet d'acheter des sites web prêts à l'emploi et de recevoir des revenus
-              quotidiens pendant 45 jours.
+              quotidiens.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg">
@@ -41,7 +41,7 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold">Revenus Quotidiens</h3>
             <p className="text-muted-foreground">
-              Recevez 1/45 du prix d'achat chaque jour pendant 45 jours après votre achat.
+            Recevez des revenus quotidiens pendant 360 jours dès l'achat de votre boutique.
             </p>
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
@@ -59,7 +59,7 @@ export default function Home() {
             </div>
             <h3 className="text-xl font-bold">Paiements Sécurisés</h3>
             <p className="text-muted-foreground">
-              Payez par carte bancaire avec conversion automatique en cryptomonnaie.
+            Payer directement avec vos cryptomonnaies en toute sérénité.
             </p>
           </div>
         </div>
