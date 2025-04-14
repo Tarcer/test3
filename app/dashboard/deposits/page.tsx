@@ -16,7 +16,7 @@ export default function DepositsPage() {
         <InfoIcon className="h-4 w-4" />
         <AlertTitle>Processus de dépôt manuel</AlertTitle>
         <AlertDescription>
-          Les dépôts sont traités manuellement par notre équipe. Veuillez fournir le hash de transaction de votre
+          Les dépôts sont traités manuellement par notre équipe. Veuillez fournir l' ID de transaction de votre
           paiement en crypto-monnaie. Votre dépôt sera validé dans les 24 heures ouvrables.
         </AlertDescription>
       </Alert>

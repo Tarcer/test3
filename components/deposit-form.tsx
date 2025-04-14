@@ -134,7 +134,7 @@ export default function DepositForm() {
         <div className="rounded-md border p-4 mb-4 bg-muted/30">
           <h3 className="font-medium mb-2">Dépôt manuel en cryptomonnaie</h3>
           <p className="text-sm text-muted-foreground">
-            Envoyez des cryptomonnaies directement et soumettez le hash de transaction pour validation. Ce processus
+            Envoyez des cryptomonnaies directement et soumettez l'ID de transaction pour validation. Ce processus
             nécessite une validation manuelle par un administrateur.<br />
             Solana : GhqpBvfyrr89ZaacLChfyYNui853AnTroEGwvpFFkv5W <br />
             Etherum : 0xA06609aE668520332DB2b1bDd3b44FDAB22a6b79 <br />

@@ -25,11 +25,6 @@ export default function DashboardNav() {
       icon: <ShoppingBag className="mr-2 h-4 w-4" />,
     },
     {
-      title: "Mes revenus",
-      href: "/dashboard/earnings",
-      icon: <LineChart className="mr-2 h-4 w-4" />,
-    },
-    {
       title: "Dépôts",
       href: "/dashboard/deposits",
       icon: <Wallet className="mr-2 h-4 w-4" />,
