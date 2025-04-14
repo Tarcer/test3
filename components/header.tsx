@@ -138,7 +138,7 @@ export default function Header() {
 
       {/* Menu mobile */}
       {isMenuOpen && (
-        <div className="container pb-4 md:hidden">
+        <div className="container pb-4 mt-5 md:hidden">
           <nav className="flex flex-col space-y-3">
             <Link
               href="/products"
