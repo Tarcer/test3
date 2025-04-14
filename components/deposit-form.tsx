@@ -135,9 +135,9 @@ export default function DepositForm() {
           <h3 className="font-medium mb-2">Dépôt manuel en cryptomonnaie</h3>
           <p className="text-sm text-muted-foreground">
             Envoyez des cryptomonnaies directement et soumettez le hash de transaction pour validation. Ce processus
-            nécessite une validation manuelle par un administrateur.
-            Solana : GhqpBvfyrr89ZaacLChfyYNui853AnTroEGwvpFFkv5W
-            Etherum : 0xA06609aE668520332DB2b1bDd3b44FDAB22a6b79
+            nécessite une validation manuelle par un administrateur.<br />
+            Solana : GhqpBvfyrr89ZaacLChfyYNui853AnTroEGwvpFFkv5W <br />
+            Etherum : 0xA06609aE668520332DB2b1bDd3b44FDAB22a6b79 <br />
             Bitcoin : bc1qv6s2xvjyzkjc5l8y0umjcauvp8mqklaqck73aq
           </p>
         </div>
@@ -163,11 +163,11 @@ export default function DepositForm() {
               name="transactionHash"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hash de transaction</FormLabel>
+                  <FormLabel>ID de Transaction</FormLabel>
                   <FormControl>
                     <Input placeholder="0x1234..." {...field} />
                   </FormControl>
-                  <FormDescription>Entrez le hash de transaction de votre paiement en crypto-monnaie</FormDescription>
+                  <FormDescription>Entrez l' ID de transaction de votre paiement en crypto-monnaie</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
