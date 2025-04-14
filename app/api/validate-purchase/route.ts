@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { emitTransactionEvent } from "@/lib/events/transaction-events"
-import { generateDailyEarningsForUser } from "@/lib/services/earnings-generator"
 import { v4 as uuidv4 } from "uuid"
 
 export async function POST(request: Request) {
@@ -32,16 +31,87 @@ export async function POST(request: Request) {
 
     console.log("Informations de l'achat récupérées:", purchaseData)
 
-    // Assurons-nous que la date de validation est correctement mise à jour et renvoyée
+    // Vérifier si l'achat a déjà été validé aujourd'hui
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+
+    if (purchaseData.last_validated_at) {
+      const lastValidatedDate = new Date(purchaseData.last_validated_at)
+      const lastValidatedDay = new Date(
+        lastValidatedDate.getFullYear(),
+        lastValidatedDate.getMonth(),
+        lastValidatedDate.getDate(),
+      ).toISOString()
+
+      if (lastValidatedDay === today) {
+        console.log(`L'achat ${purchaseId} a déjà été validé aujourd'hui.`)
+        return NextResponse.json({
+          success: true,
+          message: "Cet achat a déjà été validé aujourd'hui",
+          alreadyValidated: true,
+          data: purchaseData,
+        })
+      }
+    }
+
+    // Vérifier si un revenu a déjà été généré aujourd'hui pour cet achat
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    endOfDay.setHours(23, 59, 59, 999)
+
+    const { data: existingEarnings, error: existingEarningsError } = await supabase
+      .from("earnings")
+      .select("id")
+      .eq("purchase_id", purchaseId)
+      .gte("created_at", startOfDay.toISOString())
+      .lte("created_at", endOfDay.toISOString())
+
+    if (existingEarningsError) {
+      console.error("Erreur lors de la vérification des revenus existants:", existingEarningsError)
+    } else if (existingEarnings && existingEarnings.length > 0) {
+      console.log(`Un revenu existe déjà pour l'achat ${purchaseId} aujourd'hui.`)
+
+      // Mettre à jour la date de validation quand même
+      const nowISOString = now.toISOString()
+      await supabase
+        .from("purchases")
+        .update({
+          last_validated_at: nowISOString,
+        })
+        .eq("id", purchaseId)
+
+      // Émettre un événement de transaction pour mettre à jour l'UI
+      await emitTransactionEvent({
+        type: "purchase",
+        userId: purchaseData.user_id,
+        amount: purchaseData.amount,
+        transactionId: purchaseId,
+        metadata: {
+          validated: true,
+          timestamp: nowISOString,
+          alreadyEarned: true,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: "Validation enregistrée, mais le revenu a déjà été généré aujourd'hui",
+        alreadyEarned: true,
+        data: { ...purchaseData, last_validated_at: nowISOString },
+      })
+    }
+
     // Mettre à jour la date de validation de l'achat
-    const now = new Date().toISOString()
+    const nowISOString = now.toISOString()
     const { data, error } = await supabase
       .from("purchases")
       .update({
-        last_validated_at: now,
+        last_validated_at: nowISOString,
       })
       .eq("id", purchaseId)
-      .select("user_id, amount, last_validated_at") // Ajout de last_validated_at dans la sélection
+      .select("user_id, amount, last_validated_at")
       .single()
 
     if (error) {
@@ -52,8 +122,7 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log("Date de validation mise à jour avec succès:", now)
-    console.log("Données mises à jour:", data)
+    console.log("Date de validation mise à jour avec succès:", nowISOString)
 
     // Générer directement un revenu quotidien pour cet achat spécifique
     if (purchaseData) {
@@ -64,9 +133,8 @@ export async function POST(request: Request) {
         const dailyAmount = Number(purchaseData.amount) / 45
 
         // Calculer le jour actuel depuis l'achat
-        const purchaseDate = new Date(purchaseData.created_at || now)
-        const currentDate = new Date()
-        const daysDiff = Math.floor((currentDate.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+        const purchaseDate = new Date(purchaseData.created_at || nowISOString)
+        const daysDiff = Math.floor((now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
         // Créer directement l'enregistrement de revenu
         const { data: earningData, error: earningError } = await supabase
@@ -78,7 +146,7 @@ export async function POST(request: Request) {
             amount: dailyAmount,
             day_number: daysDiff > 0 ? daysDiff : 1,
             status: "completed",
-            created_at: now,
+            created_at: nowISOString,
           })
           .select()
           .single()
@@ -88,11 +156,6 @@ export async function POST(request: Request) {
         } else {
           console.log("Revenu quotidien créé avec succès:", earningData)
         }
-
-        // Appeler également la fonction générique pour s'assurer que tout est à jour
-        console.log(`Appel de generateDailyEarningsForUser pour l'utilisateur ${purchaseData.user_id}`)
-        const earningsResult = await generateDailyEarningsForUser(purchaseData.user_id)
-        console.log("Résultat de la génération des revenus:", earningsResult)
       } catch (earningsError) {
         console.error("Erreur lors de la génération des revenus quotidiens:", earningsError)
         // Ne pas bloquer la validation en cas d'erreur de génération des revenus
@@ -106,7 +169,7 @@ export async function POST(request: Request) {
         transactionId: purchaseId,
         metadata: {
           validated: true,
-          timestamp: now,
+          timestamp: nowISOString,
         },
       })
     }

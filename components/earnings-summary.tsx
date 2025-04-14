@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 import { RefreshCw } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
-import InitializeEarningsButton from "@/components/initialize-earning-button"
 
 export default function EarningsSummary() {
   const [balance, setBalance] = useState<number | null>(null)
@@ -48,7 +47,7 @@ export default function EarningsSummary() {
     }
   }
 
-  // Améliorons la récupération et l'affichage des données dans le résumé des revenus
+  // Modifier la fonction fetchData pour ne pas forcer la génération de revenus
   const fetchData = useCallback(
     async (isRefresh = false) => {
       if (!user) return
@@ -105,7 +104,7 @@ export default function EarningsSummary() {
           console.error("Failed to fetch earnings:", earningsResult.reason)
         }
 
-        // Récupérer spécifiquement les revenus d'aujourd'hui
+        // Récupérer spécifiquement les revenus d'aujourd'hui sans forcer la génération
         try {
           const today = new Date().toISOString().split("T")[0]
           console.log(`Récupération spécifique des revenus pour aujourd'hui (${today})`)
@@ -180,11 +179,8 @@ export default function EarningsSummary() {
   const renderEarningsChart = () => {
     if (dailyEarnings.length === 0) {
       return (
-        <div className="flex flex-col h-full items-center justify-center gap-4 p-6">
-          <p className="text-sm text-muted-foreground text-center">
-            Aucune donnée de revenus disponible. Vous devez initialiser vos revenus pour voir les données.
-          </p>
-          <InitializeEarningsButton />
+        <div className="flex h-full items-center justify-center">
+          <p className="text-sm text-muted-foreground">Aucune donnée de revenus disponible</p>
         </div>
       )
     }

@@ -3,19 +3,20 @@ import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import type { Database } from "@/lib/supabase/database.types"
 import { checkAndGenerateMissingEarnings } from "@/lib/services/earnings-generator"
-import { generateDailyEarningsForUser } from "@/lib/services/earnings-generator"
 
 // Cache pour les revenus quotidiens
 const dailyEarningsCache = new Map<string, { amount: number; timestamp: number }>()
 const CACHE_TTL = 60 * 1000 // 1 minute en millisecondes
 
-// Assurons-nous que les revenus quotidiens sont correctement calculés
+// Modifier la fonction GET pour ne pas générer automatiquement des revenus
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get("userId")
     const date = searchParams.get("date") || new Date().toISOString().split("T")[0]
     const skipCache = searchParams.get("skipCache") === "true"
+    // Nouveau paramètre pour contrôler si on doit générer des revenus manquants
+    const forceGenerate = searchParams.get("forceGenerate") === "true"
 
     if (!userId) {
       return NextResponse.json({ success: false, error: "ID utilisateur manquant" }, { status: 400 })
@@ -23,9 +24,11 @@ export async function GET(request: NextRequest) {
 
     console.log(`Récupération des revenus quotidiens pour l'utilisateur ${userId} à la date ${date}`)
 
-    // Vérifier et générer les revenus manquants pour l'utilisateur
-    // Cette fonction s'assure que les revenus sont générés pour les achats validés
-    await checkAndGenerateMissingEarnings(userId)
+    // Ne vérifier et générer les revenus manquants que si explicitement demandé
+    if (forceGenerate) {
+      const checkResult = await checkAndGenerateMissingEarnings(userId)
+      console.log("Résultat de la vérification des revenus manquants:", checkResult)
+    }
 
     // Clé de cache unique pour cet utilisateur et cette date
     const cacheKey = `${userId}-${date}`
@@ -55,18 +58,6 @@ export async function GET(request: NextRequest) {
     if (userError) {
       console.error("Erreur lors de la vérification de l'utilisateur:", userError)
       return NextResponse.json({ success: false, error: "Utilisateur non trouvé" }, { status: 404 })
-    }
-
-    // Forcer la génération des revenus pour aujourd'hui si demandé
-    if (skipCache) {
-      console.log(`Forçage de la génération des revenus pour l'utilisateur ${userId} à la date ${date}`)
-      try {
-        const forceResult = await generateDailyEarningsForUser(userId, date)
-        console.log("Résultat du forçage de la génération des revenus:", forceResult)
-      } catch (forceError) {
-        console.error("Erreur lors du forçage de la génération des revenus:", forceError)
-        // Continuer même en cas d'erreur
-      }
     }
 
     // Convertir la date en objet Date pour obtenir le début et la fin de la journée

@@ -16,6 +16,7 @@ interface RecentPurchasesProps {
 export default function RecentPurchases() {
   const [purchases, setPurchases] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [validatingPurchaseId, setValidatingPurchaseId] = useState<string | null>(null)
   const { user } = useAuth()
   const { toast } = useToast()
 
@@ -66,9 +67,9 @@ export default function RecentPurchases() {
     }
   }, [fetchPurchases, user])
 
-  // Modifier la fonction handleValidate pour s'assurer que le bouton reste désactivé
   const handleValidate = async (purchaseId: string) => {
     try {
+      setValidatingPurchaseId(purchaseId)
       setIsLoading(true)
 
       toast({
@@ -92,7 +93,6 @@ export default function RecentPurchases() {
 
       if (data.success) {
         // Mettre à jour l'état local pour refléter la validation
-        // Utiliser la date actuelle pour last_validated_at
         const now = new Date().toISOString()
         setPurchases((prevPurchases) =>
           prevPurchases.map((purchase) =>
@@ -100,10 +100,22 @@ export default function RecentPurchases() {
           ),
         )
 
-        toast({
-          title: "Achat validé",
-          description: "L'achat a été validé avec succès et les revenus quotidiens ont été générés.",
-        })
+        if (data.alreadyValidated) {
+          toast({
+            title: "Déjà validé",
+            description: "Cet achat a déjà été validé aujourd'hui.",
+          })
+        } else if (data.alreadyEarned) {
+          toast({
+            title: "Validation enregistrée",
+            description: "La validation a été enregistrée, mais le revenu a déjà été généré aujourd'hui.",
+          })
+        } else {
+          toast({
+            title: "Achat validé",
+            description: "L'achat a été validé avec succès et les revenus quotidiens ont été générés.",
+          })
+        }
 
         // Rafraîchir les données pour voir les changements
         setTimeout(() => {
@@ -121,6 +133,7 @@ export default function RecentPurchases() {
       })
     } finally {
       setIsLoading(false)
+      setValidatingPurchaseId(null)
     }
   }
 
@@ -150,20 +163,12 @@ export default function RecentPurchases() {
               const isActive = daysRemaining > 0
 
               // Vérifier si l'achat a été validé dans les dernières 24 heures
-              // Amélioration de la logique pour être plus robuste
               const lastValidatedAt = purchase.last_validated_at ? new Date(purchase.last_validated_at) : null
-              const timeSinceLastValidation = lastValidatedAt
-                ? now.getTime() - lastValidatedAt.getTime()
-                : Number.POSITIVE_INFINITY
-              const isValidated = lastValidatedAt && timeSinceLastValidation < 24 * 60 * 60 * 1000
 
-              console.log(
-                `Achat ${purchase.id} - Dernière validation: ${lastValidatedAt ? lastValidatedAt.toISOString() : "jamais"}`,
-              )
-              console.log(
-                `Temps écoulé depuis la dernière validation: ${timeSinceLastValidation / (60 * 60 * 1000)} heures`,
-              )
-              console.log(`Bouton désactivé: ${isValidated}`)
+              // Vérifier si l'achat a été validé aujourd'hui
+              const isValidatedToday = lastValidatedAt
+                ? lastValidatedAt.toDateString() === new Date().toDateString()
+                : false
 
               return (
                 <div
@@ -201,13 +206,15 @@ export default function RecentPurchases() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleValidate(purchase.id)}
-                      disabled={isValidated}
+                      disabled={isValidatedToday || validatingPurchaseId === purchase.id}
                     >
-                      {isValidated ? (
+                      {isValidatedToday ? (
                         <>
                           <CheckCircle className="mr-2 h-4 w-4" />
                           Validé
                         </>
+                      ) : validatingPurchaseId === purchase.id ? (
+                        "En cours..."
                       ) : (
                         "Valider"
                       )}

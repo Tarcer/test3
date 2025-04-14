@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get("userId")
     const skipCache = searchParams.get("skipCache") === "true"
+    const readOnly = searchParams.get("readOnly") === "true" // Nouveau paramètre pour indiquer une lecture seule
 
     if (!userId) {
       return NextResponse.json({ success: false, error: "ID utilisateur manquant" }, { status: 400 })
@@ -91,9 +92,6 @@ export async function GET(request: NextRequest) {
         )
       }
     }
-
-    // Rest of the function remains the same...
-    // [existing code to fetch balance from database]
 
     // Créer un client Supabase pour les Route Handlers
     const supabase = createRouteHandlerClient<Database>({ cookies })

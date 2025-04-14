@@ -51,7 +51,8 @@ export default function BalanceSection() {
         }
 
         console.log("Fetching balance for dashboard section:", user.id)
-        const result = await getUserBalance(user.id)
+        // S'assurer que l'API ne fait que lire les données sans générer de revenus
+        const result = await getUserBalance(user.id, true) // Ajouter un paramètre readOnly=true
 
         if (result.success && result.data) {
           console.log("Balance data fetched successfully:", result.data)
