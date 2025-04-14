@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Utilisateur non trouvé" }, { status: 404 })
     }
 
+    // Assurons-nous que last_validated_at est inclus dans la sélection
     // Récupérer les achats de l'utilisateur avec les détails des produits
     const { data: purchases, error: purchasesError } = await supabase
       .from("purchases")
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
         amount,
         status,
         created_at,
+        last_validated_at,
         products:product_id (
           id,
           name,

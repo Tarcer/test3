@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     // Récupérer les informations de l'achat avant la mise à jour
     const { data: purchaseData, error: purchaseError } = await supabase
       .from("purchases")
-      .select("id, user_id, amount, product_id, last_validated_at")
+      .select("id, user_id, amount, product_id, last_validated_at, created_at")
       .eq("id", purchaseId)
       .single()
 
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
 
     console.log("Informations de l'achat récupérées:", purchaseData)
 
+    // Assurons-nous que la date de validation est correctement mise à jour et renvoyée
     // Mettre à jour la date de validation de l'achat
     const now = new Date().toISOString()
     const { data, error } = await supabase
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
         last_validated_at: now,
       })
       .eq("id", purchaseId)
-      .select("user_id, amount")
+      .select("user_id, amount, last_validated_at") // Ajout de last_validated_at dans la sélection
       .single()
 
     if (error) {
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
     }
 
     console.log("Date de validation mise à jour avec succès:", now)
+    console.log("Données mises à jour:", data)
 
     // Générer directement un revenu quotidien pour cet achat spécifique
     if (purchaseData) {

@@ -66,8 +66,7 @@ export default function RecentPurchases() {
     }
   }, [fetchPurchases, user])
 
-  // Modifier la fonction handleValidate pour afficher plus d'informations sur le résultat
-
+  // Modifier la fonction handleValidate pour s'assurer que le bouton reste désactivé
   const handleValidate = async (purchaseId: string) => {
     try {
       setIsLoading(true)
@@ -93,9 +92,11 @@ export default function RecentPurchases() {
 
       if (data.success) {
         // Mettre à jour l'état local pour refléter la validation
+        // Utiliser la date actuelle pour last_validated_at
+        const now = new Date().toISOString()
         setPurchases((prevPurchases) =>
           prevPurchases.map((purchase) =>
-            purchase.id === purchaseId ? { ...purchase, last_validated_at: new Date().toISOString() } : purchase,
+            purchase.id === purchaseId ? { ...purchase, last_validated_at: now } : purchase,
           ),
         )
 
@@ -149,9 +150,20 @@ export default function RecentPurchases() {
               const isActive = daysRemaining > 0
 
               // Vérifier si l'achat a été validé dans les dernières 24 heures
+              // Amélioration de la logique pour être plus robuste
               const lastValidatedAt = purchase.last_validated_at ? new Date(purchase.last_validated_at) : null
-              const timeSinceLastValidation = lastValidatedAt ? Date.now() - lastValidatedAt.getTime() : null
-              const isValidated = timeSinceLastValidation && timeSinceLastValidation < 24 * 60 * 60 * 1000
+              const timeSinceLastValidation = lastValidatedAt
+                ? now.getTime() - lastValidatedAt.getTime()
+                : Number.POSITIVE_INFINITY
+              const isValidated = lastValidatedAt && timeSinceLastValidation < 24 * 60 * 60 * 1000
+
+              console.log(
+                `Achat ${purchase.id} - Dernière validation: ${lastValidatedAt ? lastValidatedAt.toISOString() : "jamais"}`,
+              )
+              console.log(
+                `Temps écoulé depuis la dernière validation: ${timeSinceLastValidation / (60 * 60 * 1000)} heures`,
+              )
+              console.log(`Bouton désactivé: ${isValidated}`)
 
               return (
                 <div
