@@ -26,7 +26,7 @@ export default function LoginForm() {
     if (result.success) {
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue sur WebMarket Pro",
+        description: "Bienvenue sur ViarlAds",
       })
       router.push("/dashboard")
     } else {
