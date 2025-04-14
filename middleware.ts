@@ -3,27 +3,31 @@ import type { NextRequest } from "next/server"
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 
 export async function middleware(request: NextRequest) {
-  const res = NextResponse.next()
+  try {
+    const res = NextResponse.next()
+    const supabase = createMiddlewareClient({ req: request, res })
 
-  // Créer un client spécifique au middleware
-  const supabase = createMiddlewareClient({ req: request, res })
+    // Récupération de la session
+    const { data } = await supabase.auth.getSession()
 
-  // Vérifier la session
-  const { data } = await supabase.auth.getSession()
+    // Vérification des routes protégées (sans admin)
+    const protectedRoutes = ["/dashboard", "/account/settings"]
+    const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
 
-  // Vérifier si l'utilisateur est authentifié pour les routes protégées
-  const protectedRoutes = ["/dashboard", "/account/settings", "/admin"]
-  const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+    if (isProtectedRoute && !data.session) {
+      const redirectUrl = new URL("/account/login", request.url)
+      redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
 
-  if (isProtectedRoute && !data.session) {
-    const redirectUrl = new URL("/account/login", request.url)
-    redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
+    return res
+  } catch (error) {
+    console.error("Middleware error:", error)
+    // En cas d'erreur, on continue sans bloquer la navigation
+    return NextResponse.next()
   }
-
-  return res
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/account/:path*", "/dashboard/:path*"],
 }
