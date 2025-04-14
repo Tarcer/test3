@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
   // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
   const totalRevenue = stats
-    ? (stats.dailyEarnings || 0) + (stats.affiliateCommissions || 0) + (stats.balance?.available || 0)
+    ? (stats.dailyEarnings || 0) + (stats.affiliateCommissions || 0)
     : 0
 
   return (
@@ -165,7 +165,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
-                <p className="text-xs text-muted-foreground">Solde + Revenus quotidiens + Commissions</p>
+                <p className="text-xs text-muted-foreground">Revenus quotidiens + Commissions</p>
               </>
             )}
           </CardContent>

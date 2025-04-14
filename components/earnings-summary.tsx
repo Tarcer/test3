@@ -188,7 +188,7 @@ export default function EarningsSummary() {
   }
 
   // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
-  const totalRevenue = todayEarnings + affiliateCommissions + (balance || 0)
+  const totalRevenue = todayEarnings + affiliateCommissions
 
   // Fonction pour rendre le graphique des revenus quotidiens
   const renderEarningsChart = () => {
@@ -296,18 +296,11 @@ export default function EarningsSummary() {
             </div>
 
             <div className="rounded-lg border p-4 bg-primary/10">
-              <h3 className="font-medium">Total des revenus (solde + quotidiens + commissions)</h3>
+              <h3 className="font-medium">Total des revenus</h3>
               {isLoading ? (
                 <Skeleton className="h-8 w-24 mt-2" />
               ) : (
-                <>
-                  <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
-                  <div className="flex flex-wrap justify-between mt-2 text-xs text-muted-foreground">
-                    <span>Solde: {formatCurrency(balance || 0)}</span>
-                    <span>Quotidiens: {formatCurrency(todayEarnings)}</span>
-                    <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
-                  </div>
-                </>
+                <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
               )}
             </div>
 

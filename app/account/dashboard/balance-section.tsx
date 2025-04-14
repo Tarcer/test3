@@ -118,7 +118,7 @@ export default function BalanceSection() {
   }, [fetchBalance])
 
   // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
-  const totalRevenue = dailyEarnings + affiliateCommissions + (balance?.available || 0)
+  const totalRevenue = dailyEarnings + affiliateCommissions
 
   if (isLoading && !isRefreshing) {
     return (
@@ -213,10 +213,9 @@ export default function BalanceSection() {
 
           {/* Nouvelle section pour afficher les revenus totaux */}
           <div className="rounded-lg border p-4 bg-primary/10">
-            <h3 className="font-medium">Revenus totaux (solde + quotidiens + commissions)</h3>
+            <h3 className="font-medium">Revenus totaux (quotidiens + commissions)</h3>
             <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
-            <div className="flex flex-wrap justify-between mt-2 text-xs text-muted-foreground">
-              <span>Solde: {formatCurrency(balance?.available || 0)}</span>
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
               <span>Quotidiens: {formatCurrency(dailyEarnings)}</span>
               <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
             </div>
