@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,37 +19,64 @@ export default function RecentPurchases() {
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const fetchPurchases = useCallback(async () => {
+    if (!user) return
+
+    setIsLoading(true)
+    try {
+      const response = await fetch(`/api/user/purchases?userId=${user.id}`)
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (data.success) {
+        setPurchases(data.data || [])
+      } else {
+        console.error("Erreur lors de la récupération des achats:", data.error)
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des achats:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [user])
+
   useEffect(() => {
-    const fetchPurchases = async () => {
-      if (!user) return
+    fetchPurchases()
+  }, [fetchPurchases])
 
-      setIsLoading(true)
-      try {
-        const response = await fetch(`/api/user/purchases?userId=${user.id}`)
-
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        if (data.success) {
-          setPurchases(data.data || [])
-        } else {
-          console.error("Erreur lors de la récupération des achats:", data.error)
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des achats:", error)
-      } finally {
-        setIsLoading(false)
+  // Écouteur d'événement pour les mises à jour de transactions
+  useEffect(() => {
+    const handleTransactionUpdate = (event: CustomEvent) => {
+      if (user && event.detail.userId === user.id) {
+        console.log("Transaction update detected in RecentPurchases, refreshing data")
+        fetchPurchases()
       }
     }
 
-    fetchPurchases()
-  }, [user])
+    // Ajouter l'écouteur d'événement
+    window.addEventListener("transaction-update", handleTransactionUpdate as EventListener)
+
+    // Nettoyer l'écouteur d'événement
+    return () => {
+      window.removeEventListener("transaction-update", handleTransactionUpdate as EventListener)
+    }
+  }, [fetchPurchases, user])
+
+  // Modifier la fonction handleValidate pour afficher plus d'informations sur le résultat
 
   const handleValidate = async (purchaseId: string) => {
     try {
+      setIsLoading(true)
+
+      toast({
+        title: "Validation en cours",
+        description: "Veuillez patienter pendant la validation de l'achat...",
+      })
+
       const response = await fetch("/api/validate-purchase", {
         method: "POST",
         headers: {
@@ -74,8 +101,13 @@ export default function RecentPurchases() {
 
         toast({
           title: "Achat validé",
-          description: "L'achat a été validé avec succès.",
+          description: "L'achat a été validé avec succès et les revenus quotidiens ont été générés.",
         })
+
+        // Rafraîchir les données pour voir les changements
+        setTimeout(() => {
+          fetchPurchases()
+        }, 1000)
       } else {
         throw new Error(data.error || "Erreur lors de la validation de l'achat")
       }
@@ -86,6 +118,8 @@ export default function RecentPurchases() {
         description: error.message || "Une erreur est survenue lors de la validation de l'achat",
         variant: "destructive",
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 

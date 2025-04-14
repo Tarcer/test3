@@ -123,3 +123,11 @@
     border-radius: 0.5rem;
   }
 }
+
+/* Assurer que les formulaires sont entièrement visibles sur mobile */
+@media (max-width: 640px) {
+  .container {
+    padding-bottom: 5rem;
+  }
+}
+

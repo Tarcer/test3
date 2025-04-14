@@ -41,6 +41,9 @@ export async function generateDailyEarningsForAllUsers() {
   }
 }
 
+// Modifier la fonction generateDailyEarningsForUser pour s'assurer qu'elle fonctionne correctement
+// et ajouter plus de logs pour le débogage
+
 /**
  * Génère les revenus quotidiens pour un utilisateur spécifique
  */
@@ -48,6 +51,8 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
   const supabase = await createServerSupabaseClient()
 
   try {
+    console.log(`Début de generateDailyEarningsForUser pour l'utilisateur ${userId}`)
+
     // Vérifier si l'utilisateur existe
     const { data: user, error: userError } = await supabase.from("users").select("id").eq("id", userId).single()
 
@@ -59,7 +64,7 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
     // Récupérer les achats actifs de l'utilisateur
     const { data: purchases, error: purchasesError } = await supabase
       .from("purchases")
-      .select("id, amount, created_at")
+      .select("id, amount, created_at, last_validated_at")
       .eq("user_id", userId)
       .eq("status", "completed")
 
@@ -67,6 +72,8 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
       console.error("Error fetching purchases:", purchasesError)
       return { success: false, error: purchasesError.message }
     }
+
+    console.log(`${purchases.length} achats trouvés pour l'utilisateur ${userId}`)
 
     if (purchases.length === 0) {
       return { success: true, message: "No purchases found for this user", generated: 0 }
@@ -80,12 +87,17 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
     const endOfDay = new Date(earningsDate)
     endOfDay.setHours(23, 59, 59, 999)
 
+    console.log(`Période de recherche: ${startOfDay.toISOString()} à ${endOfDay.toISOString()}`)
+
     // Générer des revenus pour chaque achat
     const earningsToInsert = []
 
     for (const purchase of purchases) {
+      console.log(`Traitement de l'achat ${purchase.id}`)
+
       // Calculer le montant quotidien (1/45 du prix d'achat)
       const dailyAmount = Number(purchase.amount) / 45
+      console.log(`Montant quotidien calculé: ${dailyAmount}`)
 
       // Vérifier si un revenu existe déjà pour cet achat à cette date
       const { data: existingEarnings, error: existingError } = await supabase
@@ -96,16 +108,22 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
         .gte("created_at", startOfDay.toISOString())
         .lt("created_at", endOfDay.toISOString())
 
+      console.log(`Revenus existants pour l'achat ${purchase.id}:`, existingEarnings)
+
       // Si aucun revenu n'existe pour cette date, en créer un
       if (!existingEarnings || existingEarnings.length === 0) {
         // Calculer le jour actuel depuis l'achat
         const purchaseDate = new Date(purchase.created_at)
         const daysDiff = Math.floor((earningsDate.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+        console.log(`Jour actuel depuis l'achat: ${daysDiff}`)
 
         // Ne générer des revenus que pour les 45 premiers jours
         if (daysDiff <= 45) {
+          const earningId = uuidv4()
+          console.log(`Création d'un nouveau revenu avec ID: ${earningId}`)
+
           earningsToInsert.push({
-            id: uuidv4(),
+            id: earningId,
             user_id: userId,
             purchase_id: purchase.id,
             amount: dailyAmount,
@@ -113,27 +131,39 @@ export async function generateDailyEarningsForUser(userId: string, date?: string
             status: "completed",
             created_at: new Date().toISOString(),
           })
+        } else {
+          console.log(`L'achat ${purchase.id} a dépassé la période de 45 jours`)
         }
+      } else {
+        console.log(`Un revenu existe déjà pour l'achat ${purchase.id} à cette date`)
       }
     }
 
     // Insérer les nouveaux revenus
     if (earningsToInsert.length > 0) {
-      const { error: insertError } = await supabase.from("earnings").insert(earningsToInsert)
+      console.log(`Insertion de ${earningsToInsert.length} nouveaux revenus:`, earningsToInsert)
+
+      const { data: insertedEarnings, error: insertError } = await supabase
+        .from("earnings")
+        .insert(earningsToInsert)
+        .select()
 
       if (insertError) {
         console.error("Error inserting earnings:", insertError)
         return { success: false, error: insertError.message }
       }
 
+      console.log(`${insertedEarnings.length} revenus insérés avec succès`)
+
       return {
         success: true,
         message: `Generated ${earningsToInsert.length} earnings for user ${userId}`,
         generated: earningsToInsert.length,
-        earnings: earningsToInsert,
+        earnings: insertedEarnings,
       }
     }
 
+    console.log("Aucun nouveau revenu à générer")
     return { success: true, message: "No new earnings to generate", generated: 0 }
   } catch (error: any) {
     console.error("Error in generateDailyEarningsForUser:", error)

@@ -85,8 +85,8 @@ export default function BalanceSection() {
   useEffect(() => {
     fetchBalance()
 
-    // Rafraîchir le solde toutes les 30 secondes
-    const intervalId = setInterval(() => fetchBalance(true), 30000)
+    // Rafraîchir le solde toutes les 15 secondes (au lieu de 30)
+    const intervalId = setInterval(() => fetchBalance(true), 15000)
 
     return () => clearInterval(intervalId)
   }, [fetchBalance])

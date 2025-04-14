@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 import { RefreshCw } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
+import InitializeEarningsButton from "@/components/initialize-earning-button"
 
 export default function EarningsSummary() {
   const [balance, setBalance] = useState<number | null>(null)
@@ -136,12 +137,12 @@ export default function EarningsSummary() {
   useEffect(() => {
     fetchData()
 
-    // Configurer un intervalle pour rafraîchir les données toutes les 5 minutes
+    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute (au lieu de 5)
     const intervalId = setInterval(
       () => {
         fetchData(true)
       },
-      5 * 60 * 1000,
+      1 * 60 * 1000,
     )
 
     return () => clearInterval(intervalId)
@@ -179,8 +180,11 @@ export default function EarningsSummary() {
   const renderEarningsChart = () => {
     if (dailyEarnings.length === 0) {
       return (
-        <div className="flex h-full items-center justify-center">
-          <p className="text-sm text-muted-foreground">Aucune donnée de revenus disponible</p>
+        <div className="flex flex-col h-full items-center justify-center gap-4 p-6">
+          <p className="text-sm text-muted-foreground text-center">
+            Aucune donnée de revenus disponible. Vous devez initialiser vos revenus pour voir les données.
+          </p>
+          <InitializeEarningsButton />
         </div>
       )
     }
