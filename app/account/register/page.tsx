@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import RegisterForm from "@/components/register-form"
 
 export const metadata: Metadata = {
-  title: "Inscription | WebMarket Pro",
-  description: "Créez un nouveau compte sur WebMarket Pro",
+  title: "Inscription |  ViralAds",
+  description: "Créez un nouveau compte sur  ViralAds",
 }
 
 export default function RegisterPage() {

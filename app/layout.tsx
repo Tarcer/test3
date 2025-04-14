@@ -27,5 +27,13 @@ export default function RootLayout({
     </html>
   )
 }
-
+export const metadata: Metadata = {
+  title: "ViralAds | Achetez des sites web et gagnez des revenus",
+  description: "Nous vous proposons une opportunité unique de développer votre propre boutique en ligne multi-plateformes (TikTok, eBay, Amazon) sans avoir à gérer les stocks ni l'expédition des produits.",
+  generator: "v0.dev",
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
+ }
 import './globals.css'

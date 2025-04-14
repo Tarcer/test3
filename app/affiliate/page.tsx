@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, TrendingUp, ArrowRight, Wallet } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Programme d'Affiliation | WebMarket Pro",
+  title: "Programme d'Affiliation |  ViralAds",
   description: "Gagnez des commissions en parrainant de nouveaux utilisateurs",
 }
 

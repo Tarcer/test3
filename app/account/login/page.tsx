@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import LoginForm from "@/components/login-form"
 
 export const metadata: Metadata = {
-  title: "Connexion | WebMarket Pro",
-  description: "Connectez-vous à votre compte WebMarket Pro",
+  title: "Connexion | ViralAds",
+  description: "Connectez-vous à votre compte  ViralAds",
 }
 
 export default function LoginPage() {

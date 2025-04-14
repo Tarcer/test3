@@ -3,7 +3,7 @@ import CartItems from "@/components/cart-items"
 import CartSummary from "@/components/cart-summary"
 
 export const metadata: Metadata = {
-  title: "Panier | WebCrypto Market",
+  title: "Panier |  ViralAds",
   description: "Consultez et gérez les articles dans votre panier",
 }
 
