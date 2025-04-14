@@ -46,7 +46,10 @@ export default function UserBalanceDisplay() {
       lastFetchTimeRef.current = now
 
       try {
-        const response = await fetch(`/api/user/balance?userId=${userId}${force ? "&skipCache=true" : ""}`)
+        // S'assurer que l'API ne fait que lire les données sans générer de revenus
+        const response = await fetch(
+          `/api/user/balance?userId=${userId}${force ? "&skipCache=true" : ""}&readOnly=true`,
+        )
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`)

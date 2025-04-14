@@ -227,7 +227,7 @@ export async function seedSystemSettings() {
   const settings = [
     {
       key: "earningsPeriod",
-      value: { days: 45 },
+      value: { days: 360 },
     },
     {
       key: "withdrawalFee",
