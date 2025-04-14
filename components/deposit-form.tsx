@@ -136,6 +136,9 @@ export default function DepositForm() {
           <p className="text-sm text-muted-foreground">
             Envoyez des cryptomonnaies directement et soumettez le hash de transaction pour validation. Ce processus
             nécessite une validation manuelle par un administrateur.
+            Solana : GhqpBvfyrr89ZaacLChfyYNui853AnTroEGwvpFFkv5W
+            Etherum : 0xA06609aE668520332DB2b1bDd3b44FDAB22a6b79
+            Bitcoin : bc1qv6s2xvjyzkjc5l8y0umjcauvp8mqklaqck73aq
           </p>
         </div>
 

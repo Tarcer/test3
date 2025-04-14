@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -13,23 +13,21 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { CheckCircle, AlertCircle, Loader2, Wallet } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/supabase/auth"
-import { requestWithdrawal } from "@/lib/services/withdrawal-service"
+import { requestWithdrawal, getWithdrawalLimits } from "@/lib/services/withdrawal-service"
 
+// Modifier le schéma de validation pour utiliser les limites dynamiques
 const withdrawalSchema = z.object({
-  amount: z
-    .string()
-    .refine((val) => !isNaN(Number.parseFloat(val)), {
-      message: "Le montant doit être un nombre",
-    })
-    .refine((val) => Number.parseFloat(val) >= 10, {
-      message: "Le montant minimum est de 10 €",
-    }),
+  amount: z.string().refine((val) => !isNaN(Number.parseFloat(val)), {
+    message: "Le montant doit être un nombre",
+  }),
   walletAddress: z.string().min(1, "L'adresse de portefeuille est requise"),
 })
 
 export default function WithdrawalForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [withdrawalLimits, setWithdrawalLimits] = useState<any>(null)
+  const [isLoadingLimits, setIsLoadingLimits] = useState(true)
   const { toast } = useToast()
   const { user } = useAuth()
   const router = useRouter()
@@ -38,6 +36,23 @@ export default function WithdrawalForm() {
   // Récupérer les paramètres de l'URL pour afficher des messages de succès/échec
   const success = searchParams.get("success")
   const withdrawalId = searchParams.get("withdrawal_id")
+
+  // Récupérer les limites de retrait au chargement du composant
+  useEffect(() => {
+    const fetchWithdrawalLimits = async () => {
+      setIsLoadingLimits(true)
+      try {
+        const limits = await getWithdrawalLimits()
+        setWithdrawalLimits(limits)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des limites de retrait:", error)
+      } finally {
+        setIsLoadingLimits(false)
+      }
+    }
+
+    fetchWithdrawalLimits()
+  }, [])
 
   const form = useForm<z.infer<typeof withdrawalSchema>>({
     resolver: zodResolver(withdrawalSchema),
@@ -57,11 +72,33 @@ export default function WithdrawalForm() {
       return
     }
 
+    if (!withdrawalLimits || !withdrawalLimits.isWithdrawalDay) {
+      toast({
+        title: "Retrait non disponible",
+        description: "Les retraits ne sont pas disponibles aujourd'hui. Veuillez réessayer un jour ouvrable.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
     setError(null)
 
     try {
       const amount = Number.parseFloat(values.amount)
+
+      // Vérifier les limites
+      if (amount < withdrawalLimits.limits.min) {
+        throw new Error(
+          `Le montant minimum de retrait pour ${withdrawalLimits.dayName} est de ${withdrawalLimits.limits.min} USDT`,
+        )
+      }
+
+      if (amount > withdrawalLimits.limits.max) {
+        throw new Error(
+          `Le montant maximum de retrait pour ${withdrawalLimits.dayName} est de ${withdrawalLimits.limits.max} USDT`,
+        )
+      }
 
       // Créer une demande de retrait
       const result = await requestWithdrawal(user.id, amount, values.walletAddress)
@@ -116,6 +153,34 @@ export default function WithdrawalForm() {
           </Alert>
         )}
 
+        {isLoadingLimits ? (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Chargement des limites de retrait...</AlertTitle>
+            <AlertDescription>
+              Veuillez patienter pendant que nous récupérons les limites de retrait pour aujourd'hui.
+            </AlertDescription>
+          </Alert>
+        ) : withdrawalLimits && withdrawalLimits.isWithdrawalDay ? (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Limites de retrait pour {withdrawalLimits.dayName}</AlertTitle>
+            <AlertDescription>
+              Aujourd'hui, vous pouvez retirer entre {withdrawalLimits.limits.min} et {withdrawalLimits.limits.max}{" "}
+              USDT.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Retraits non disponibles</AlertTitle>
+            <AlertDescription>
+              Les retraits ne sont pas disponibles aujourd'hui. Veuillez réessayer un jour ouvrable (du lundi au
+              vendredi).
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -123,11 +188,26 @@ export default function WithdrawalForm() {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Montant (€)</FormLabel>
+                  <FormLabel>Montant (USDT)</FormLabel>
                   <FormControl>
-                    <Input placeholder="100" {...field} type="number" min="10" step="1" />
+                    <Input
+                      placeholder={
+                        withdrawalLimits?.isWithdrawalDay
+                          ? `Entre ${withdrawalLimits.limits.min} et ${withdrawalLimits.limits.max}`
+                          : "Retraits non disponibles aujourd'hui"
+                      }
+                      {...field}
+                      type="number"
+                      min={withdrawalLimits?.limits?.min || 0}
+                      max={withdrawalLimits?.limits?.max || 0}
+                      disabled={!withdrawalLimits?.isWithdrawalDay}
+                    />
                   </FormControl>
-                  <FormDescription>Entrez le montant que vous souhaitez retirer (minimum 10 €)</FormDescription>
+                  <FormDescription>
+                    {withdrawalLimits?.isWithdrawalDay
+                      ? `Entrez le montant que vous souhaitez retirer (entre ${withdrawalLimits.limits.min} et ${withdrawalLimits.limits.max} USDT)`
+                      : "Les retraits ne sont pas disponibles aujourd'hui"}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -139,7 +219,11 @@ export default function WithdrawalForm() {
                 <FormItem>
                   <FormLabel>Adresse de portefeuille</FormLabel>
                   <FormControl>
-                    <Input placeholder="Votre adresse de portefeuille crypto" {...field} />
+                    <Input
+                      placeholder="Votre adresse de portefeuille crypto"
+                      {...field}
+                      disabled={!withdrawalLimits?.isWithdrawalDay}
+                    />
                   </FormControl>
                   <FormDescription>
                     Entrez l'adresse de votre portefeuille crypto où vous souhaitez recevoir les fonds
@@ -155,11 +239,11 @@ export default function WithdrawalForm() {
               </p>
               <p className="text-sm mt-1">
                 <span className="font-medium">Montant net:</span>{" "}
-                {form.watch("amount") ? `${(Number(form.watch("amount")) * 0.9).toFixed(2)} €` : "0.00 €"}
+                {form.watch("amount") ? `${(Number(form.watch("amount")) * 0.9).toFixed(2)} USDT` : "0.00 USDT"}
               </p>
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full">
+            <Button type="submit" disabled={isLoading || !withdrawalLimits?.isWithdrawalDay} className="w-full">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

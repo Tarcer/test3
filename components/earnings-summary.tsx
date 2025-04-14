@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/supabase/auth"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
@@ -12,13 +11,10 @@ import { formatCurrency } from "@/lib/utils"
 
 export default function EarningsSummary() {
   const [balance, setBalance] = useState<number | null>(null)
-  const [nextWithdrawalDate, setNextWithdrawalDate] = useState<string | null>(null)
-  const [daysUntilWithdrawal, setDaysUntilWithdrawal] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dailyEarnings, setDailyEarnings] = useState<any[]>([])
   const [todayEarnings, setTodayEarnings] = useState<number>(0)
-  const { toast } = useToast()
   const { user } = useAuth()
   const router = useRouter()
 
@@ -66,15 +62,13 @@ export default function EarningsSummary() {
         console.log(`Récupération des données pour l'utilisateur ${user.id}, rafraîchissement: ${isRefresh}`)
 
         // Utiliser Promise.allSettled pour gérer les échecs partiels
-        const [balanceResult, withdrawalDaysResult, earningsResult] = await Promise.allSettled([
+        const [balanceResult, earningsResult] = await Promise.allSettled([
           fetchWithRetry(`/api/user/balance?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`),
-          fetchWithRetry(`/api/withdrawal-days`),
           fetchWithRetry(`/api/user/earnings?userId=${user.id}&period=week${isRefresh ? "&skipCache=true" : ""}`),
         ])
 
         console.log("Résultats des requêtes:", {
           balanceStatus: balanceResult.status,
-          withdrawalDaysStatus: withdrawalDaysResult.status,
           earningsStatus: earningsResult.status,
         })
 
@@ -84,46 +78,6 @@ export default function EarningsSummary() {
           console.log("Solde récupéré:", balanceResult.value.data)
         } else if (balanceResult.status === "rejected") {
           console.error("Failed to fetch balance:", balanceResult.reason)
-        }
-
-        // Traiter les jours de retrait si disponibles
-        if (withdrawalDaysResult.status === "fulfilled" && withdrawalDaysResult.value.success) {
-          const withdrawalDays = withdrawalDaysResult.value.data.sort((a: number, b: number) => a - b)
-          console.log("Jours de retrait récupérés:", withdrawalDays)
-
-          // Calculer la prochaine date de retrait
-          const today = new Date()
-          const currentDay = today.getDate()
-
-          let nextDay = withdrawalDays.find((day: number) => day > currentDay)
-
-          if (!nextDay) {
-            // Si aucun jour n'est trouvé ce mois-ci, utiliser le premier jour du mois prochain
-            nextDay = withdrawalDays[0]
-            const nextMonth = today.getMonth() + 1
-            const nextYear = nextMonth > 11 ? today.getFullYear() + 1 : today.getFullYear()
-            const nextDate = new Date(nextYear, nextMonth % 12, nextDay)
-            setNextWithdrawalDate(nextDate.toLocaleDateString())
-
-            // Calculer le nombre de jours jusqu'au prochain retrait
-            const diffTime = nextDate.getTime() - today.getTime()
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            setDaysUntilWithdrawal(diffDays)
-
-            console.log(`Prochain jour de retrait: ${nextDate.toLocaleDateString()}, dans ${diffDays} jours`)
-          } else {
-            // Le prochain jour est ce mois-ci
-            const nextDate = new Date(today.getFullYear(), today.getMonth(), nextDay)
-            setNextWithdrawalDate(nextDate.toLocaleDateString())
-
-            // Calculer le nombre de jours jusqu'au prochain retrait
-            const diffDays = nextDay - currentDay
-            setDaysUntilWithdrawal(diffDays)
-
-            console.log(`Prochain jour de retrait: ${nextDate.toLocaleDateString()}, dans ${diffDays} jours`)
-          }
-        } else if (withdrawalDaysResult.status === "rejected") {
-          console.error("Failed to fetch withdrawal days:", withdrawalDaysResult.reason)
         }
 
         // Traiter les données de revenus si disponibles
@@ -215,17 +169,10 @@ export default function EarningsSummary() {
     fetchData(true)
   }
 
+  // Modifier la fonction handleWithdrawalRequest pour qu'elle redirige simplement vers la page de retrait
   const handleWithdrawalRequest = () => {
-    if (daysUntilWithdrawal && daysUntilWithdrawal > 0) {
-      toast({
-        title: "Demande de retrait",
-        description: `Les retraits ne sont pas disponibles aujourd'hui. Prochain jour de retrait: ${nextWithdrawalDate}`,
-        variant: "destructive",
-      })
-    } else {
-      // Rediriger vers la page de retrait
-      router.push("/dashboard/withdrawals")
-    }
+    // Rediriger vers la page de retrait
+    router.push("/dashboard/withdrawals")
   }
 
   // Fonction pour rendre le graphique des revenus quotidiens
@@ -333,30 +280,11 @@ export default function EarningsSummary() {
               )}
             </div>
 
-            <div className="rounded-lg border p-4">
-              <h3 className="font-medium">Prochain jour de retrait</h3>
-              {isLoading ? (
-                <Skeleton className="h-6 w-32 mt-2" />
-              ) : (
-                <>
-                  <p className="mt-2 text-lg">{nextWithdrawalDate || "Aujourd'hui"}</p>
-                  {daysUntilWithdrawal !== null && (
-                    <p className="text-sm text-muted-foreground">
-                      {daysUntilWithdrawal > 0
-                        ? `Dans ${daysUntilWithdrawal} jour${daysUntilWithdrawal > 1 ? "s" : ""}`
-                        : "Disponible aujourd'hui"}
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
-
             <Button onClick={handleWithdrawalRequest} disabled={isLoading}>
               Demander un retrait
             </Button>
             <p className="text-xs text-muted-foreground">
-              Note: Les retraits sont soumis à des frais de 10% et ne sont disponibles qu'aux jours spécifiés par
-              l'administration.
+              Note: Les retraits sont soumis à des frais de 10% et sont traités manuellement par l'administration.
             </p>
           </div>
         </CardContent>

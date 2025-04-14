@@ -76,7 +76,7 @@ export default function HowItWorksPage() {
             <div>
               <h3 className="font-semibold">Quelles cryptomonnaies acceptez-vous?</h3>
               <p className="mt-2 text-muted-foreground">
-                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant Bitcoin (BTC), Ethereum (ETH) ou USDT.
+                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant Bitcoin (BTC), Ethereum (ETH) ou Solana (SOL).
               </p>
             </div>
             <div>
