@@ -124,123 +124,27 @@
   }
 }
 
-/* Ajustements pour mobile */
+/* Assurer que les formulaires sont entièrement visibles sur mobile */
 @media (max-width: 640px) {
   .container {
     padding-bottom: 5rem;
   }
 
-  /* Ajustement pour le header sur mobile */
+  /* Ajout d'un espace supplémentaire en haut pour le header sur mobile */
   body {
     padding-top: env(safe-area-inset-top, 0);
   }
+}
 
-  /* Ajuster l'espace sous le header */
-  main {
-    padding-top: 3.5rem !important;
+/* Améliorer l'affichage sur mobile */
+@media (max-width: 640px) {
+  .container {
+    padding-bottom: 5rem;
   }
 
   /* Assurer que le footer ne chevauche pas le contenu */
   footer {
     position: relative;
     margin-top: 2rem;
-  }
-
-  /* Supprimer les marges inutiles */
-  header {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-}
-
-/* Ajout de styles pour améliorer la compatibilité entre navigateurs */
-html {
-  -webkit-text-size-adjust: 100%; /* Empêche l'agrandissement du texte en mode paysage sur iOS */
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-/* Correction pour les problèmes de flexbox sur Safari */
-@supports (-webkit-touch-callout: none) {
-  .flex {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-  }
-
-  .flex-col {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-  }
-
-  .flex-row {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-  }
-
-  .items-center {
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-  }
-
-  .justify-center {
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-  }
-
-  .justify-between {
-    -webkit-box-pack: justify;
-    -webkit-justify-content: space-between;
-    justify-content: space-between;
-  }
-}
-
-/* Fix pour les problèmes de position fixed sur iOS */
-@supports (-webkit-overflow-scrolling: touch) {
-  .fixed {
-    position: fixed;
-    width: 100%;
-    -webkit-backface-visibility: hidden;
-  }
-}
-
-/* Amélioration de la lisibilité du texte sur tous les navigateurs */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Correction pour les problèmes d'affichage des inputs sur iOS */
-input,
-textarea,
-button,
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: var(--radius);
-}
-
-/* Correction pour Firefox */
-@-moz-document url-prefix() {\
-  select {
-    text-indent: 0.01px;
-    text-overflow: '';
-    padding-right: 1rem;
-  }
-}
-
-/* Correction pour Edge */
-@supports (-ms-ime-align: auto) {
-  .grid {
-    display: -ms-grid;
-    display: grid;
   }
 }

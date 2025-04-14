@@ -21,60 +21,14 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user, signOut } = useAuth()
   const pathname = usePathname()
-  const [isMounted, setIsMounted] = useState(false)
-
-  // Éviter les problèmes d'hydratation
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   // Fermer le menu mobile lors du changement de page
   useEffect(() => {
     setIsMenuOpen(false)
   }, [pathname])
 
-  // Gérer le scroll sur iOS pour éviter les problèmes avec le header fixe
-  useEffect(() => {
-    const handleTouchMove = (e: TouchEvent) => {
-      // Permettre le scroll sauf si on est en haut de la page
-      if (window.scrollY <= 0) {
-        // Empêcher le pull-to-refresh sur iOS
-        const target = e.target as HTMLElement
-        if (!target.closest("main")) {
-          e.preventDefault()
-        }
-      }
-    }
-
-    document.addEventListener("touchmove", handleTouchMove, { passive: false })
-
-    return () => {
-      document.removeEventListener("touchmove", handleTouchMove)
-    }
-  }, [])
-
-  if (!isMounted) {
-    // Rendu côté serveur ou pendant l'hydratation
-    return (
-      <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm top-0">
-        <div className="container flex h-14 md:h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8"></div>
-            <Link href="/" className="flex items-center">
-              <span className="text-lg font-bold">ViralAds</span>
-            </Link>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8"></div>
-            <div className="w-8 h-8"></div>
-          </div>
-        </div>
-      </header>
-    )
-  }
-
   return (
-    <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm top-0">
+    <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm mt-4 sm:mt-0 top-0 sm:top-0">
       <div className="container flex h-14 md:h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Button
