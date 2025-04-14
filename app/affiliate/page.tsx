@@ -161,7 +161,7 @@ export default function AffiliateProgramPage() {
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Comment rejoindre le programme d'affiliation ?</h3>
                   <p className="text-muted-foreground">
-                    Tous les utilisateurs inscrits sur WebMarket Pro sont automatiquement inscrits au programme
+                    Tous les utilisateurs inscrits sur Viralads sont automatiquement inscrits au programme
                     d'affiliation. Vous pouvez trouver votre lien d'affiliation unique dans votre tableau de bord.
                   </p>
                 </div>
@@ -200,7 +200,7 @@ export default function AffiliateProgramPage() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Quel est le montant minimum de retrait ?</h3>
-                  <p className="text-muted-foreground">Le montant minimum pour effectuer un retrait est de 50 €.</p>
+                  <p className="text-muted-foreground">Le montant minimum pour effectuer un retrait est de 10 €.</p>
                 </div>
               </TabsContent>
             </Tabs>

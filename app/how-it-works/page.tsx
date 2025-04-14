@@ -12,10 +12,7 @@ export default function HowItWorksPage() {
     <div className="container py-8 md:py-12">
       <div className="flex flex-col gap-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">How It Works</h1>
-          <p className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl">
-            Learn how to purchase and use website templates with cryptocurrency
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Comment ça marche ?</h1>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -24,11 +21,11 @@ export default function HowItWorksPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <Search className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="mt-4">1. Browse Templates</CardTitle>
+              <CardTitle className="mt-4">1. Parcourir les boutiques</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Explore our collection of premium website templates and find the perfect one for your project.
+               Découvrez notre collection de boutiques en ligne premium et trouvez celle qui correspond parfaitement à votre projet.
               </CardDescription>
             </CardContent>
           </Card>
@@ -37,11 +34,11 @@ export default function HowItWorksPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <Wallet className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="mt-4">2. Fund Your Wallet</CardTitle>
+              <CardTitle className="mt-4">2. Alimenter votre portefeuille</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Deposit cryptocurrency to your WebCrypto wallet using Bitcoin, Ethereum, or USDT.
+                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant Bitcoin, Ethereum ou USDT. 
               </CardDescription>
             </CardContent>
           </Card>
@@ -50,11 +47,11 @@ export default function HowItWorksPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <CreditCard className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="mt-4">3. Complete Purchase</CardTitle>
+              <CardTitle className="mt-4">3. Finaliser l'achat</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Pay for your selected templates using your wallet balance. The transaction is secure and instant.
+              Réglez vos boutiques sélectionnées avec le solde de votre portefeuille. La transaction est sécurisée et instantanée.
               </CardDescription>
             </CardContent>
           </Card>
@@ -63,42 +60,51 @@ export default function HowItWorksPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <Download className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="mt-4">4. Download & Use</CardTitle>
+              <CardTitle className="mt-4">4. Suivi de vos performances et rendements</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Instantly access your purchased templates from your account dashboard and start using them.
+               Accédez immédiatement à vos boutiques achetées depuis votre tableau de bord et commencez à suivre vos performances et rendements.
               </CardDescription>
             </CardContent>
           </Card>
         </div>
 
         <div className="mt-8">
-          <h2 className="text-2xl font-bold">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold">Questions fréquemment posées</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="font-semibold">What cryptocurrencies do you accept?</h3>
+              <h3 className="font-semibold">Quelles cryptomonnaies acceptez-vous?</h3>
               <p className="mt-2 text-muted-foreground">
-                We currently accept Bitcoin (BTC), Ethereum (ETH), and Tether (USDT). We plan to add more options in the
-                future.
+                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant Bitcoin (BTC), Ethereum (ETH) ou USDT.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">How do I receive my purchased templates?</h3>
+              <h3 className="font-semibold">Comment se passe une Vente de Produits ?</h3>
               <p className="mt-2 text-muted-foreground">
-                After purchase, templates are immediately available in your account dashboard for download.
+              Vous vendez des produits via notre réseau sur TikTok, eBay et Amazon
+              L'usine partenaire prend en charge :
+              • L'emballage
+              • L'expédition
+              • Le service client
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">Can I request customizations to the templates?</h3>
+              <h3 className="font-semibold">Quel est mon rôle en tant que gérant ?</h3>
               <p className="mt-2 text-muted-foreground">
-                Yes, we offer customization services for an additional fee. Contact our support team for details.
+              Vos responsabilités quotidiennes incluent :
+
+              • Validation des commandes de votre boutique
+              • Suivi des performances de vente
+              • Développement de votre réseau de boutiques affiliées
               </p>
             </div>
             <div>
-              <h3 className="font-semibold">What if I need help with my template?</h3>
+              <h3 className="font-semibold">Comment fonctionne le système d'affiliation?</h3>
               <p className="mt-2 text-muted-foreground">
-                All templates come with documentation. If you need additional help, our support team is available.
+              • Développez votre réseau en invitant d'autres personnes à devenir propriétaires de boutiques
+              • Partagez votre lien d'affiliation pour sponsoriser de nouveaux vendeurs
+              • Bénéficiez d'une rémunération complémentaire grâce au parrainage
               </p>
             </div>
           </div>

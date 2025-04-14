@@ -44,7 +44,7 @@ export default function AccountSettingsClient({ user }: AccountSettingsClientPro
         <div className="mt-6">
           <h3 className="mb-2 text-lg font-medium">Paramètres de paiement</h3>
           <p className="text-muted-foreground">
-            Nous utilisons Coinbase Commerce pour traiter tous les paiements de manière sécurisée.
+            Nous utilisons la blockchain pour une meilleure fluidité et rapidité des transactions.
           </p>
         </div>
       </div>

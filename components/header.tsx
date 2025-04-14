@@ -41,7 +41,7 @@ export default function Header() {
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">WebCrypto</span>
+            <span className="text-xl font-bold">ViralAds</span>
           </Link>
           <nav className="hidden md:flex md:gap-4 lg:gap-6">
             <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">

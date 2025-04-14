@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container flex flex-col gap-8 py-8 md:py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-medium">WebMarket Pro</h3>
+            <h3 className="text-lg font-medium">ViralAds</h3>
             <p className="text-sm text-muted-foreground">
               Plateforme d'achat de sites web avec système de rémunération et programme d'affiliation
             </p>
@@ -16,15 +16,6 @@ export default function Footer() {
             <nav className="flex flex-col gap-2">
               <Link href="/products" className="text-sm text-muted-foreground hover:underline">
                 Tous les Sites
-              </Link>
-              <Link href="/products/category/ecommerce" className="text-sm text-muted-foreground hover:underline">
-                E-commerce
-              </Link>
-              <Link href="/products/category/blog" className="text-sm text-muted-foreground hover:underline">
-                Blog
-              </Link>
-              <Link href="/products/category/portfolio" className="text-sm text-muted-foreground hover:underline">
-                Portfolio
               </Link>
             </nav>
           </div>
@@ -62,10 +53,10 @@ export default function Footer() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} WebMarket Pro. Tous droits réservés.
+            &copy; {new Date().getFullYear()} ViralAds. Tous droits réservés.
           </p>
           <div className="flex items-center gap-4">
-            <p className="text-sm text-muted-foreground">Paiements sécurisés par carte bancaire</p>
+            <p className="text-sm text-muted-foreground">Paiements sécurisés.</p>
           </div>
         </div>
       </div>

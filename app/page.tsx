@@ -12,11 +12,10 @@ export default function Home() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center gap-6 text-center">
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-white">
-              Achetez des Sites Web et Gagnez des Revenus Quotidiens
+              Bienvenue dans l'univers ViralAds !
             </h1>
             <p className="max-w-[700px] text-muted-foreground md:text-xl text-gray-400">
-              Notre plateforme unique vous permet d'acheter des sites web prêts à l'emploi et de recevoir des revenus
-              quotidiens.
+            Nous vous proposons une opportunité unique de développer votre propre boutique en ligne multi-plateformes (TikTok, eBay, Amazon) sans avoir à gérer les stocks ni l'expédition des produits.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg">
@@ -123,7 +122,7 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold">Effectuez l'Achat</h3>
               <p className="text-sm text-muted-foreground">
-                Payez en toute sécurité par carte bancaire et recevez votre site.
+                Payer directement avec vos cryptomonnaies en toute sérénité.
               </p>
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
