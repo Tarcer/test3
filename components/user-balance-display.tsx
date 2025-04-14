@@ -202,21 +202,15 @@ export default function UserBalanceDisplay() {
   return (
     <div className="flex items-center">
       {isLoading ? (
-        <Skeleton className="h-8 w-20" />
+        <Skeleton className="h-6 w-20" />
       ) : (
         <div className="flex items-center gap-1">
-          <Badge variant="outline" className="flex items-center gap-1 px-2 py-1 text-xs sm:text-sm sm:px-3 sm:py-1.5">
-            <Wallet className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-            <span>{balance !== null ? balance.toFixed(2) : "0.00"} €</span>
+          <Badge variant="outline" className="flex items-center gap-1 px-2 py-1">
+            <Wallet className="h-3 w-3" />
+            <span className="text-xs">{balance !== null ? balance.toFixed(2) : "0.00"} €</span>
           </Badge>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 sm:h-8 sm:w-8 p-0"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-          >
-            <RefreshCw className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+          <Button variant="ghost" size="icon" className="h-6 w-6 p-0" onClick={handleRefresh} disabled={isRefreshing}>
+            <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
             <span className="sr-only">Rafraîchir</span>
           </Button>
         </div>
