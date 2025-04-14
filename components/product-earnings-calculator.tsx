@@ -18,10 +18,10 @@ export default function ProductEarningsCalculator({ productPrice }: ProductEarni
   useEffect(() => {
     const daily = price / 45
     setDailyEarnings(daily)
-    setTotalEarnings(daily * 45)
+    setTotalEarnings(daily * 360)
 
     // Net profit after 10% withdrawal fee
-    const gross = daily * 45
+    const gross = daily * 360
     const fee = gross * 0.1
     const net = gross - fee
     setNetProfit(net)
@@ -44,7 +44,7 @@ export default function ProductEarningsCalculator({ productPrice }: ProductEarni
             </div>
             <div className="space-y-2">
               <Label>Période de rémunération</Label>
-              <p className="text-sm text-muted-foreground">45 jours (fixe)</p>
+              <p className="text-sm text-muted-foreground">360 jours (fixe)</p>
             </div>
             <div className="space-y-2">
               <Label>Frais de retrait</Label>
@@ -57,7 +57,7 @@ export default function ProductEarningsCalculator({ productPrice }: ProductEarni
               <p className="mt-2 text-2xl font-bold text-primary">{dailyEarnings.toFixed(2)} €</p>
             </div>
             <div className="rounded-lg border p-4">
-              <h3 className="font-medium">Revenu total (45 jours)</h3>
+              <h3 className="font-medium">Revenu total (360 jours)</h3>
               <p className="mt-2 text-2xl font-bold">{totalEarnings.toFixed(2)} €</p>
             </div>
             <div className="rounded-lg border p-4">

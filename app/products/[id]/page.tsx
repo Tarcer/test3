@@ -54,40 +54,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       <div className="mt-12">
-        <Tabs defaultValue="details">
-          <TabsList>
-            <TabsTrigger value="details">Détails</TabsTrigger>
-            <TabsTrigger value="earnings">Revenus potentiels</TabsTrigger>
-          </TabsList>
-          <TabsContent value="details" className="mt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="prose max-w-none">
-                  <h3>Description détaillée</h3>
-                  <p>{product.long_description || product.description}</p>
-                  <h3>Caractéristiques</h3>
-                  <ul>
-                    {product.features?.map((feature: string, index: number) => <li key={index}>{feature}</li>) || (
-                      <>
-                        <li>Accès à vie aux mises à jour</li>
-                        <li>Support technique inclus</li>
-                        <li>Documentation complète</li>
-                      </>
-                    )}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="earnings" className="mt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <ProductEarningsCalculator productPrice={product.price} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+  <div>
+    <Card className="mt-4">
+      <CardContent className="pt-6">
+        <ProductEarningsCalculator productPrice={product.price} />
+      </CardContent>
+    </Card>
+  </div>
+</div>
     </div>
   )
 }

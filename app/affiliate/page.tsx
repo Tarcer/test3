@@ -18,7 +18,7 @@ export default function AffiliateProgramPage() {
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Programme d'Affiliation</h1>
             <p className="mx-auto mt-4 max-w-[700px] text-muted-foreground md:text-xl">
-              Gagnez des commissions en parrainant de nouveaux utilisateurs sur notre plateforme
+              Gagnez des commissions en parrainant de nouveaux utilisateurs sur notre plateforme.
             </p>
           </div>
 
@@ -68,6 +68,7 @@ export default function AffiliateProgramPage() {
           {/* Commission Structure */}
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-center mb-6">Structure des Commissions</h2>
+            <p className="mt-2 font-bold  text-center mb-5 text-[#00BFFF]">Bénéficiez de 30€/mois pendant 1 an (360 jours) offerts pour 4 parrainages, sans limite de cumul au gré de vos filleuls.</p>
             <div className="grid gap-6 md:grid-cols-3">
               <Card>
                 <CardHeader>
@@ -170,7 +171,7 @@ export default function AffiliateProgramPage() {
                   <p className="text-muted-foreground">
                     Le programme d'affiliation fonctionne sur 3 niveaux. Vous gagnez des commissions sur les achats de
                     vos filleuls directs (niveau 1), sur les achats des filleuls de vos filleuls (niveau 2), et sur les
-                    achats des filleuls de niveau 3.
+                    achats des filleuls de niveau 3. 
                   </p>
                 </div>
               </TabsContent>
@@ -189,6 +190,12 @@ export default function AffiliateProgramPage() {
                     de vos filleuls.
                   </p>
                 </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Combien de fois puis-je bénéficier de l’offre de 30€ par mois pendant 12 mois ?</h3>
+                  <p className="text-muted-foreground">
+                  Vous pouvez bénéficier de cette offre autant de fois que vous parrainez un groupe de 4 personnes, et l’offre est cumulable à l’infini. Par exemple, si vous parrainez 8 personnes, vous recevrez 60€/mois pendant 12 mois.
+                  </p>
+                </div>
               </TabsContent>
               <TabsContent value="payments" className="mt-6 space-y-4">
                 <div className="space-y-2">
@@ -200,7 +207,17 @@ export default function AffiliateProgramPage() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Quel est le montant minimum de retrait ?</h3>
-                  <p className="text-muted-foreground">Le montant minimum pour effectuer un retrait est de 10 €.</p>
+                  <p className="text-muted-foreground">Le montant minimum pour effectuer un retrait est de 5 €.</p>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Quand retirer mes bénéfices ?</h3>
+                  <p className="text-muted-foreground">Voici les plages horaires de retrait disponibles selon les jours :<br />
+
+                  • Lundi : 5 à 10 USDT<br />
+                  •  Mardi : 50 à 500 USDT<br />
+                  • Mercredi : 1 000 à 10 000 USDT<br />
+                  • Jeudi : 50 000 à 500 000 USDT<br />
+                  • Vendredi : Jusqu'à 100 000 USDT</p>
                 </div>
               </TabsContent>
             </Tabs>

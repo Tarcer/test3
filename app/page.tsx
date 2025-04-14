@@ -11,18 +11,22 @@ export default function Home() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-[#09090b] to-[#1a1a1c]">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center gap-6 text-center">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-white">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-[#A259FF]">
               Bienvenue dans l'univers ViralAds !
             </h1>
-            <p className="max-w-[700px] text-muted-foreground md:text-xl text-gray-400">
+            <p className="max-w-[700px] text-muted-foreground md:text-xl text-white">
             Nous vous proposons une opportunité unique de développer votre propre boutique en ligne multi-plateformes (TikTok, eBay, Amazon) sans avoir à gérer les stocks ni l'expédition des produits.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg">
-                <Link href="/products">
-                  Voir les Sites Disponibles <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+            <Button
+  asChild
+  size="lg"
+  className="bg-[#A259FF] text-white hover:bg-[#9125ff]"
+>
+  <Link href="/products">
+    Voir les Sites Disponibles <ArrowRight className="ml-2 h-4 w-4" />
+  </Link>
+</Button>
               <Button variant="outline" size="lg" asChild>
                 <Link href="/account/register">Créer un Compte</Link>
               </Button>
@@ -38,7 +42,7 @@ export default function Home() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <TrendingUp className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold">Revenus Quotidiens</h3>
+            <h3 className="text-xl font-bold text-[#A259FF]">Revenus Quotidiens</h3>
             <p className="text-muted-foreground">
             Recevez des revenus quotidiens pendant 360 jours dès l'achat de votre boutique.
             </p>
@@ -47,7 +51,7 @@ export default function Home() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Users className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold">Programme d'Affiliation</h3>
+            <h3 className="text-xl font-bold text-[#A259FF]">Programme d'Affiliation</h3>
             <p className="text-muted-foreground">
               Gagnez des commissions sur 3 niveaux de parrainage : 1%, 0,5% et 0,25%.
             </p>
@@ -56,7 +60,7 @@ export default function Home() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Wallet className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold">Paiements Sécurisés</h3>
+            <h3 className="text-xl font-bold text-[#A259FF]">Paiements Sécurisés</h3>
             <p className="text-muted-foreground">
             Payer directement avec vos cryptomonnaies en toute sérénité.
             </p>
@@ -65,10 +69,10 @@ export default function Home() {
       </section>
 
       {/* Earnings Calculator */}
-      <section className="container px-4 md:px-6 py-8 bg-muted/50 rounded-lg">
+      <section className="container px-4 md:px-6 py-8 bg-gradient-to-b from-[#09090b] to-[#1a1a1c] rounded-lg">
         <div className="flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold tracking-tight">Calculez Vos Revenus Potentiels</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-white">Calculez Vos Revenus Potentiels</h2>
             <p className="mt-2 text-muted-foreground">
               Estimez vos revenus quotidiens et totaux en fonction du prix d'achat
             </p>
@@ -81,7 +85,7 @@ export default function Home() {
       <section className="container px-4 md:px-6">
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Sites Web Populaires</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-white">Sites Web Populaires</h2>
             <Link href="/products" className="text-primary hover:underline">
               Voir tous les sites
             </Link>
@@ -94,7 +98,7 @@ export default function Home() {
       <section className="container px-4 md:px-6">
         <div className="flex flex-col gap-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold tracking-tight">Comment Ça Marche</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-whie">Comment Ça Marche</h2>
             <p className="mt-2 text-muted-foreground">Notre processus simple en 4 étapes</p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

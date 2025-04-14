@@ -76,34 +76,36 @@ export default function HowItWorksPage() {
             <div>
               <h3 className="font-semibold">Quelles cryptomonnaies acceptez-vous?</h3>
               <p className="mt-2 text-muted-foreground">
-                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant Bitcoin (BTC), Ethereum (ETH) ou Solana (SOL).
+                Déposez des cryptomonnaies sur votre portefeuille Viralads en utilisant:<br />
+                • Bitcoin (BTC)<br />
+                • Ethereum (ETH)<br />
+                • Solana (SOL)
               </p>
             </div>
             <div>
               <h3 className="font-semibold">Comment se passe une Vente de Produits ?</h3>
               <p className="mt-2 text-muted-foreground">
               Vous vendez des produits via notre réseau sur TikTok, eBay et Amazon
-              L'usine partenaire prend en charge :
-              • L'emballage
-              • L'expédition
+              L'usine partenaire prend en charge :<br />
+              • L'emballage<br />
+              • L'expédition<br />
               • Le service client
               </p>
             </div>
             <div>
               <h3 className="font-semibold">Quel est mon rôle en tant que gérant ?</h3>
               <p className="mt-2 text-muted-foreground">
-              Vos responsabilités quotidiennes incluent :
-
-              • Validation des commandes de votre boutique
-              • Suivi des performances de vente
-              • Développement de votre réseau de boutiques affiliées
+                Vos responsabilités quotidiennes incluent :<br />
+               • Validation des commandes de votre boutique<br />
+               • Suivi des performances de vente<br />
+               • Développement de votre réseau de boutiques affiliées
               </p>
             </div>
             <div>
               <h3 className="font-semibold">Comment fonctionne le système d'affiliation?</h3>
               <p className="mt-2 text-muted-foreground">
-              • Développez votre réseau en invitant d'autres personnes à devenir propriétaires de boutiques
-              • Partagez votre lien d'affiliation pour sponsoriser de nouveaux vendeurs
+              • Développez votre réseau en invitant d'autres personnes à devenir propriétaires de boutiques<br />
+              • Partagez votre lien d'affiliation pour sponsoriser de nouveaux vendeurs<br />
               • Bénéficiez d'une rémunération complémentaire grâce au parrainage
               </p>
             </div>
