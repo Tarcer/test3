@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useCart } from "@/lib/cart"
 
+
+export const dynamic = "force-dynamic"
 // Événement personnalisé pour la mise à jour du solde
 const BALANCE_UPDATE_EVENT = "balance-updated"
 

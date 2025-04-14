@@ -6,8 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Wallet, RefreshCw } from "lucide-react"
 import { useAuth } from "@/lib/supabase/auth"
 import { Button } from "@/components/ui/button"
-// Ajouter l'import pour le bouton de synchronisation
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // Cache global pour le solde avec un TTL plus court pour les mises à jour fréquentes
 const balanceCache = new Map<string, { balance: number; timestamp: number }>()
@@ -100,8 +98,6 @@ export default function UserBalanceDisplay() {
     }
   }, [fetchBalance, user])
 
-  // Dans useEffect, ajouter un écouteur d'événements pour les mises à jour de transactions
-
   // Écouteur d'événement pour les mises à jour de transactions
   useEffect(() => {
     const handleTransactionUpdate = (event: CustomEvent) => {
@@ -181,26 +177,12 @@ export default function UserBalanceDisplay() {
     }
   }, [user, fetchBalance])
 
-  // Modifier la fonction handleRefresh pour inclure la synchronisation
   const handleRefresh = async () => {
     if (!user || isRefreshing) return
 
     setIsRefreshing(true)
     try {
-      // Synchroniser le solde via l'API
-      const syncResponse = await fetch("/api/user/sync-balance", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user.id }),
-      })
-
-      if (syncResponse.ok) {
-        console.log("Balance synchronized successfully")
-      }
-
-      // Ensuite, récupérer le solde mis à jour
+      // Récupérer le solde mis à jour
       const result = await fetchBalance(true)
       if (result !== null) {
         setBalance(result)
@@ -224,27 +206,10 @@ export default function UserBalanceDisplay() {
             <Wallet className="h-3.5 w-3.5" />
             <span>{balance !== null ? balance.toFixed(2) : "0.00"} €</span>
           </Badge>
-          {/* Modifier le rendu du bouton de rafraîchissement pour inclure une infobulle */}
-          {/* Remplacer le bouton existant par: */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 p-0"
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                >
-                  <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  <span className="sr-only">Rafraîchir et synchroniser</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Rafraîchir et synchroniser le solde</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0" onClick={handleRefresh} disabled={isRefreshing}>
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            <span className="sr-only">Rafraîchir</span>
+          </Button>
         </div>
       )}
     </div>

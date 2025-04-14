@@ -4,6 +4,8 @@ import "./globals.css"
 import ClientLayout from "./client-layout"
 import { Inter } from "next/font/google"
 
+export const dynamic = "force-dynamic"
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {

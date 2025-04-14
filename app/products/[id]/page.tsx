@@ -6,6 +6,8 @@ import { getProductById } from "@/lib/services/product-service"
 import AddToCartButton from "@/components/add-to-cart-button"
 import ProductEarningsCalculator from "@/components/product-earnings-calculator"
 
+export const dynamic = "force-dynamic"
+
 interface ProductPageProps {
   params: {
     id: string

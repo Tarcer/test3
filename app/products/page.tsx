@@ -5,6 +5,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
+// Ajoutez cette ligne au début du fichier, juste après les imports
+export const dynamic = "force-dynamic"
+
 export default async function ProductsPage() {
   const supabase = await createServerSupabaseClient()
 
