@@ -5,8 +5,8 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
+    "NEXT_PUBLIC_SUPABASE_URL": "https://xyfxppirdxnsfcrpuzxo.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5ZnhwcGlyZHhuc2ZjcnB1enhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyODY2NDQsImV4cCI6MjA1OTg2MjY0NH0.PLqdhSkGjhWuisSn9H5LTurJazSXRmWmq4tKIcqCNrM",
+    "NEXT_PUBLIC_SITE_URL":"https://v0-test3-git-main-tarcers-projects.vercel.app/"
   }
 }
