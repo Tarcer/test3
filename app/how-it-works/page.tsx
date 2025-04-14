@@ -106,7 +106,49 @@ export default function HowItWorksPage() {
               <p className="mt-2 text-muted-foreground">
               • Développez votre réseau en invitant d'autres personnes à devenir propriétaires de boutiques<br />
               • Partagez votre lien d'affiliation pour sponsoriser de nouveaux vendeurs<br />
-              • Bénéficiez d'une rémunération complémentaire grâce au parrainage
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Guide d'utilisation : Acheter et Envoyer de la Cryptomonnaie avec Phantom Wallet</h3>
+              <p className="mt-2 text-muted-foreground">
+              • Étape 1 : Télécharger et Installer Phantom Wallet<br />
+1. Téléchargez l'application Phantom Wallet :<br />
+   - Pour ordinateur : Rendez-vous sur [phantom.app](https://phantom.app) et téléchargez l'extension pour votre navigateur (Chrome, Firefox, Brave, etc.).<br />
+   - Pour mobile : Allez sur l'App Store (iOS) ou le Google Play Store (Android) et recherchez "Phantom Wallet".<br />
+              • Étape 2 : Créer un Nouveau Wallet<br />
+1. Lancez l'application Phantom et cliquez sur "Créer un nouveau wallet".<br />
+2. Suivez les instructions pour définir un mot de passe sécurisé. Ce mot de passe protège l'accès à votre wallet.<br />
+3. Notez votre phrase de récupération (Seed Phrase) :<br />
+   - Une série de 12 mots vous sera affichée. Ces mots sont essentiels pour récupérer votre wallet en cas de perte ou de changement d'appareil.<br />
+   - Écrivez-les soigneusement dans un endroit sûr et confidentiel. Ne les partagez jamais avec personne.<br />
+4. Confirmez votre phrase de récupération en la réorganisant dans l'ordre correct.<br />
+              </p>
+            </div>
+            <div>
+              <p className="mt-2 text-muted-foreground">
+              •  Étape 3 : Ajouter des Fonds à Votre Wallet<br />
+Il existe deux façons principales d'ajouter des cryptomonnaies à votre wallet :<br />
+
+ Option 1 : Achat Direct via Phantom (Solana uniquement)<br />
+1. Dans l'application Phantom, cliquez sur "Acheter".<br />
+2. Sélectionnez la méthode de paiement (carte bancaire ou autre, selon les options disponibles).<br />
+3. Entrez le montant que vous souhaitez acheter (en SOL ou autre devise supportée).<br />
+4. Suivez les instructions pour finaliser l'achat. Les fonds seront directement crédités dans votre wallet.<br />
+
+Option 2 : Transfert depuis un Autre Wallet ou une Plateforme d'Échange<br />
+1. Obtenez l'adresse de votre wallet Phantom :<br />
+   - Cliquez sur "Recevoir" dans l'application.<br />
+   - Copiez ou partagez l'adresse publique (une chaîne de caractères commençant généralement par "SOL" pour Solana).<br />
+2. Connectez-vous à votre compte sur une plateforme d'échange (comme Binance, Coinbase, etc.) ou un autre wallet.<br />
+3. Effectuez un transfert vers l'adresse copiée depuis Phantom.<br />
+4. Attendez quelques minutes pour que la transaction soit confirmée sur la blockchain.<br />
+              • Étape 4 : Envoyer de la Cryptomonnaie<br />
+1. Dans l'application Phantom, sélectionnez la cryptomonnaie que vous souhaitez envoyer (par exemple, SOL ou USDC).<br />
+2. Cliquez sur "Envoyer".<br />
+3. Entrez l'adresse du destinataire (assurez-vous qu'elle est correcte, car les transactions sont irréversibles).<br />
+4. Spécifiez le montant à envoyer.<br />
+5. Confirmez la transaction et approuvez les frais de réseau (généralement très bas sur Solana).<br />
+
               </p>
             </div>
           </div>
