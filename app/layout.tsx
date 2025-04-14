@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "WebMarket Pro | Achetez des sites web et gagnez des revenus",
-  description: "Plateforme d'achat de sites web avec système de rémunération et programme d'affiliation",
+  title: "ViralAds",
+  description: "Nous vous proposons une opportunité unique de développer votre propre boutique en ligne multi-plateformes (TikTok, eBay, Amazon) sans avoir à gérer les stocks ni l'expédition des produits.",
   generator: "v0.dev",
 }
 

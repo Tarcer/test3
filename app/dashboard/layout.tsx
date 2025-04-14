@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import DashboardNav from "@/components/dashboard-nav"
 
 export const metadata: Metadata = {
-  title: "Tableau de bord | WebMarket Pro",
-  description: "Gérez vos sites web, revenus et programme d'affiliation",
+  title: "Tableau de bord | ViralAds",
+  description: "Nous vous proposons une opportunité unique de développer votre propre boutique en ligne multi-plateformes (TikTok, eBay, Amazon) sans avoir à gérer les stocks ni l'expédition des produits.",
 }
 
 interface DashboardLayoutProps {
