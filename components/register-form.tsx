@@ -89,7 +89,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-10">
+    <form onSubmit={handleSubmit} className="space-y-4 mb-4 md:mb-10">
       <div className="space-y-2">
         <Label htmlFor="name">Nom complet</Label>
         <Input id="name" placeholder="Jean Dupont" required value={name} onChange={(e) => setName(e.target.value)} />

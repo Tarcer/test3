@@ -131,3 +131,15 @@
   }
 }
 
+/* Améliorer l'affichage sur mobile */
+@media (max-width: 640px) {
+  .container {
+    padding-bottom: 5rem;
+  }
+
+  /* Assurer que le footer ne chevauche pas le contenu */
+  footer {
+    position: relative;
+    margin-top: 2rem;
+  }
+}
