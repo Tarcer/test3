@@ -129,6 +129,11 @@
   .container {
     padding-bottom: 5rem;
   }
+
+  /* Ajout d'un espace supplémentaire en haut pour le header sur mobile */
+  body {
+    padding-top: env(safe-area-inset-top, 0);
+  }
 }
 
 /* Améliorer l'affichage sur mobile */

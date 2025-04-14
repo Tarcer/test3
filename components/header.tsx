@@ -28,20 +28,20 @@ export default function Header() {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-4">
+    <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm mt-4 sm:mt-0 top-0 sm:top-0">
+      <div className="container flex h-14 md:h-16 items-center justify-between">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            size="icon"
-            className="md:hidden"
+            size="sm"
+            className="md:hidden p-1 h-8 w-8"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <Link href="/" className="flex items-center">
-            <span className="text-xl font-bold">ViralAds</span>
+            <span className="text-lg font-bold">ViralAds</span>
           </Link>
         </div>
 
@@ -58,7 +58,7 @@ export default function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Afficher UserBalanceDisplay uniquement sur desktop */}
           {user && (
             <div className="hidden md:block">
@@ -71,7 +71,7 @@ export default function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
                   <User className="h-4 w-4" />
                   <span className="sr-only">Menu utilisateur</span>
                 </Button>
@@ -129,7 +129,7 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild variant="default" size="sm">
+            <Button asChild variant="default" size="sm" className="h-8 px-3 py-1 text-xs">
               <Link href="/account/login">Connexion</Link>
             </Button>
           )}

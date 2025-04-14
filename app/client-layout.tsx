@@ -31,7 +31,7 @@ export default function ClientLayout({
       <AuthProvider>
         <div className="flex min-h-screen flex-col overflow-x-hidden">
           <Header />
-          <main className="flex-1 pt-14 md:pt-16">{children}</main>
+          <main className="flex-1 pt-20 md:pt-16">{children}</main>
           <Footer />
           <Toaster />
         </div>
