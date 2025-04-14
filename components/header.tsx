@@ -30,7 +30,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-1 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -40,37 +40,39 @@ export default function Header() {
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-lg md:text-xl font-bold">ViralAds</span>
+          <Link href="/" className="flex items-center">
+            <span className="text-xl font-bold">ViralAds</span>
           </Link>
-          <nav className="hidden md:flex md:gap-4 lg:gap-6">
-            <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
-              Produits
-            </Link>
-            <Link href="/how-it-works" className="text-sm font-medium transition-colors hover:text-primary">
-              Comment ça marche
-            </Link>
-            <Link href="/affiliate" className="text-sm font-medium transition-colors hover:text-primary">
-              Programme d'affiliation
-            </Link>
-          </nav>
         </div>
-        <div className="flex items-center gap-1 md:gap-2">
-          {/* Afficher UserBalanceDisplay uniquement sur les écrans non-mobiles si l'utilisateur est connecté */}
+
+        {/* Navigation desktop */}
+        <nav className="hidden md:flex md:gap-4 lg:gap-6">
+          <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
+            Produits
+          </Link>
+          <Link href="/how-it-works" className="text-sm font-medium transition-colors hover:text-primary">
+            Comment ça marche
+          </Link>
+          <Link href="/affiliate" className="text-sm font-medium transition-colors hover:text-primary">
+            Programme d'affiliation
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          {/* Afficher UserBalanceDisplay uniquement sur desktop */}
           {user && (
-            <div className="hidden sm:block">
+            <div className="hidden md:block">
               <UserBalanceDisplay />
             </div>
           )}
 
-          {/* Afficher CartIndicator */}
           <CartIndicator />
 
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                  <User className="h-4 w-4" />
                   <span className="sr-only">Menu utilisateur</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -78,7 +80,7 @@ export default function Header() {
                 <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
                 {/* Afficher le solde dans le menu déroulant sur mobile */}
                 {user && (
-                  <div className="sm:hidden px-2 py-1.5 text-sm">
+                  <div className="md:hidden px-2 py-1.5 text-sm">
                     <UserBalanceDisplay />
                   </div>
                 )}
@@ -133,6 +135,8 @@ export default function Header() {
           )}
         </div>
       </div>
+
+      {/* Menu mobile */}
       {isMenuOpen && (
         <div className="container pb-4 md:hidden">
           <nav className="flex flex-col space-y-3">
