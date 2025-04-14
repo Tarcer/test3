@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, X, User, LogOut, Settings, LayoutDashboard, Wallet, CreditCard } from "lucide-react"
+import { Menu, X, User, LogOut, Settings, LayoutDashboard, Wallet, CreditCard, Users } from "lucide-react"
 import { useAuth } from "@/lib/supabase/auth"
 import CartIndicator from "@/components/cart-indicator"
 import UserBalanceDisplay from "@/components/user-balance-display"
@@ -30,7 +30,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-1 md:gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -41,7 +41,7 @@ export default function Header() {
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">ViralAds</span>
+            <span className="text-lg md:text-xl font-bold">ViralAds</span>
           </Link>
           <nav className="hidden md:flex md:gap-4 lg:gap-6">
             <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
@@ -55,9 +55,17 @@ export default function Header() {
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-2">
-          {user && <UserBalanceDisplay />}
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Afficher UserBalanceDisplay uniquement sur les écrans non-mobiles si l'utilisateur est connecté */}
+          {user && (
+            <div className="hidden sm:block">
+              <UserBalanceDisplay />
+            </div>
+          )}
+
+          {/* Afficher CartIndicator */}
           <CartIndicator />
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -68,6 +76,12 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
+                {/* Afficher le solde dans le menu déroulant sur mobile */}
+                {user && (
+                  <div className="sm:hidden px-2 py-1.5 text-sm">
+                    <UserBalanceDisplay />
+                  </div>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">
@@ -79,6 +93,18 @@ export default function Header() {
                   <Link href="/dashboard/deposits">
                     <Wallet className="mr-2 h-4 w-4" />
                     Déposer des fonds
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/affiliate">
+                    <Users className="mr-2 h-4 w-4" />
+                    Programme d'affiliation
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/withdrawals">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Retraits
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
