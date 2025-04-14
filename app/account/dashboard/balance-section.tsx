@@ -23,6 +23,8 @@ export default function BalanceSection() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
+  const [dailyEarnings, setDailyEarnings] = useState<number>(0)
   const { user } = useAuth()
 
   const fetchBalance = useCallback(
@@ -68,6 +70,29 @@ export default function BalanceSection() {
           console.error("Error in balance result:", result.error)
           setError(result.error || "Erreur lors de la récupération du solde")
         }
+
+        // Récupérer les commissions d'affiliation et les revenus quotidiens
+        try {
+          const statsResponse = await fetch(`/api/user/dashboard-stats?userId=${user.id}`)
+          if (statsResponse.ok) {
+            const statsData = await statsResponse.json()
+            if (statsData.success) {
+              setAffiliateCommissions(statsData.data.affiliateCommissions || 0)
+
+              // Récupérer les revenus quotidiens
+              const today = new Date().toISOString().split("T")[0]
+              const earningsResponse = await fetch(`/api/user/daily-earnings?userId=${user.id}&date=${today}`)
+              if (earningsResponse.ok) {
+                const earningsData = await earningsResponse.json()
+                if (earningsData.success) {
+                  setDailyEarnings(earningsData.data || 0)
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching additional data:", error)
+        }
       } catch (error: any) {
         console.error("Error fetching balance:", error)
         setError(error.message || "Erreur de connexion")
@@ -91,6 +116,9 @@ export default function BalanceSection() {
 
     return () => clearInterval(intervalId)
   }, [fetchBalance])
+
+  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
+  const totalRevenue = dailyEarnings + affiliateCommissions + (balance?.available || 0)
 
   if (isLoading && !isRefreshing) {
     return (
@@ -180,6 +208,17 @@ export default function BalanceSection() {
             <div>
               <p className="text-muted-foreground">Total dépensé</p>
               <p className="font-medium">{formatCurrency(balance?.purchases || 0)}</p>
+            </div>
+          </div>
+
+          {/* Nouvelle section pour afficher les revenus totaux */}
+          <div className="rounded-lg border p-4 bg-primary/10">
+            <h3 className="font-medium">Revenus totaux (solde + quotidiens + commissions)</h3>
+            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
+            <div className="flex flex-wrap justify-between mt-2 text-xs text-muted-foreground">
+              <span>Solde: {formatCurrency(balance?.available || 0)}</span>
+              <span>Quotidiens: {formatCurrency(dailyEarnings)}</span>
+              <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
             </div>
           </div>
 

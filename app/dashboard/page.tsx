@@ -18,10 +18,6 @@ export default function DashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const { user } = useAuth()
 
-  // Assurons-nous que les données sont correctement récupérées et non codées en dur
-  // Modifions la fonction fetchStats pour garantir que les données sont bien récupérées
-
-  // Dans la fonction fetchStats, assurons-nous que les logs sont plus détaillés pour le débogage
   const fetchStats = useCallback(
     async (isRefresh = false) => {
       if (!user) return
@@ -55,7 +51,7 @@ export default function DashboardPage() {
           const baseStats = statsData.data
           console.log("Statistiques de base:", baseStats)
 
-          // Récupérer spécifiquement les revenus quotidiens
+          // Récupérer spécifiquement les revenus quotidiens sans forcer la génération
           const today = new Date().toISOString().split("T")[0]
           console.log(`Récupération des revenus quotidiens pour ${today}...`)
           const earningsResponse = await fetch(
@@ -104,12 +100,12 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchStats()
 
-    // Configurer un intervalle pour rafraîchir les données toutes les 5 minutes
+    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute (au lieu de 5)
     const intervalId = setInterval(
       () => {
         fetchStats(true)
       },
-      5 * 60 * 1000,
+      1 * 60 * 1000,
     )
 
     return () => clearInterval(intervalId)
@@ -137,6 +133,11 @@ export default function DashboardPage() {
     fetchStats(true)
   }
 
+  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
+  const totalRevenue = stats
+    ? (stats.dailyEarnings || 0) + (stats.affiliateCommissions || 0) + (stats.balance?.available || 0)
+    : 0
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -163,8 +164,8 @@ export default function DashboardPage() {
               <Skeleton className="h-8 w-24" />
             ) : (
               <>
-                <div className="text-2xl font-bold">{formatCurrency(stats?.balance?.available || 0)}</div>
-                <p className="text-xs text-muted-foreground">Solde disponible</p>
+                <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
+                <p className="text-xs text-muted-foreground">Solde + Revenus quotidiens + Commissions</p>
               </>
             )}
           </CardContent>

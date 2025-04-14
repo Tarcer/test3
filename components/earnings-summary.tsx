@@ -15,6 +15,7 @@ export default function EarningsSummary() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dailyEarnings, setDailyEarnings] = useState<any[]>([])
   const [todayEarnings, setTodayEarnings] = useState<number>(0)
+  const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const { user } = useAuth()
   const router = useRouter()
 
@@ -47,7 +48,7 @@ export default function EarningsSummary() {
     }
   }
 
-  // Modifier la fonction fetchData pour ne pas forcer la génération de revenus
+  // Modifier la fonction fetchData pour récupérer aussi les commissions d'affiliation
   const fetchData = useCallback(
     async (isRefresh = false) => {
       if (!user) return
@@ -62,14 +63,16 @@ export default function EarningsSummary() {
         console.log(`Récupération des données pour l'utilisateur ${user.id}, rafraîchissement: ${isRefresh}`)
 
         // Utiliser Promise.allSettled pour gérer les échecs partiels
-        const [balanceResult, earningsResult] = await Promise.allSettled([
+        const [balanceResult, earningsResult, statsResult] = await Promise.allSettled([
           fetchWithRetry(`/api/user/balance?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`),
           fetchWithRetry(`/api/user/earnings?userId=${user.id}&period=week${isRefresh ? "&skipCache=true" : ""}`),
+          fetchWithRetry(`/api/user/dashboard-stats?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`),
         ])
 
         console.log("Résultats des requêtes:", {
           balanceStatus: balanceResult.status,
           earningsStatus: earningsResult.status,
+          statsStatus: statsResult.status,
         })
 
         // Traiter les données de solde si disponibles
@@ -102,6 +105,15 @@ export default function EarningsSummary() {
           }
         } else if (earningsResult.status === "rejected") {
           console.error("Failed to fetch earnings:", earningsResult.reason)
+        }
+
+        // Récupérer les commissions d'affiliation depuis les stats
+        if (statsResult.status === "fulfilled" && statsResult.value.success) {
+          const statsData = statsResult.value.data
+          if (statsData && typeof statsData.affiliateCommissions !== "undefined") {
+            setAffiliateCommissions(statsData.affiliateCommissions)
+            console.log("Commissions d'affiliation récupérées:", statsData.affiliateCommissions)
+          }
         }
 
         // Récupérer spécifiquement les revenus d'aujourd'hui sans forcer la génération
@@ -174,6 +186,9 @@ export default function EarningsSummary() {
     // Rediriger vers la page de retrait
     router.push("/dashboard/withdrawals")
   }
+
+  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
+  const totalRevenue = todayEarnings + affiliateCommissions + (balance || 0)
 
   // Fonction pour rendre le graphique des revenus quotidiens
   const renderEarningsChart = () => {
@@ -257,26 +272,42 @@ export default function EarningsSummary() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Solde Disponible</CardTitle>
-          <CardDescription>Montant disponible pour retrait</CardDescription>
+          <CardTitle>Revenus Détaillés</CardTitle>
+          <CardDescription>Revenus quotidiens et commissions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
             <div className="rounded-lg border p-4">
-              <h3 className="font-medium">Solde actuel</h3>
+              <h3 className="font-medium">Revenus quotidiens</h3>
               {isLoading ? (
-                <Skeleton className="h-8 w-24 mt-2" />
+                <Skeleton className="h-6 w-24 mt-2" />
               ) : (
-                <p className="mt-2 text-2xl font-bold">{formatCurrency(balance || 0)}</p>
+                <p className="mt-2 text-lg font-medium">{formatCurrency(todayEarnings)}</p>
               )}
             </div>
 
             <div className="rounded-lg border p-4">
-              <h3 className="font-medium">Revenus aujourd'hui</h3>
+              <h3 className="font-medium">Commissions d'affiliation</h3>
               {isLoading ? (
                 <Skeleton className="h-6 w-24 mt-2" />
               ) : (
-                <p className="mt-2 text-lg font-medium text-primary">{formatCurrency(todayEarnings)}</p>
+                <p className="mt-2 text-lg font-medium">{formatCurrency(affiliateCommissions)}</p>
+              )}
+            </div>
+
+            <div className="rounded-lg border p-4 bg-primary/10">
+              <h3 className="font-medium">Total des revenus (solde + quotidiens + commissions)</h3>
+              {isLoading ? (
+                <Skeleton className="h-8 w-24 mt-2" />
+              ) : (
+                <>
+                  <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
+                  <div className="flex flex-wrap justify-between mt-2 text-xs text-muted-foreground">
+                    <span>Solde: {formatCurrency(balance || 0)}</span>
+                    <span>Quotidiens: {formatCurrency(todayEarnings)}</span>
+                    <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
+                  </div>
+                </>
               )}
             </div>
 
