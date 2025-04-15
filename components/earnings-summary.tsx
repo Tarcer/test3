@@ -18,8 +18,7 @@ export default function EarningsSummary() {
   const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const { user } = useAuth()
   const router = useRouter()
-  const [totalCumulativeEarnings, setTotalCumulativeEarnings] = useState<number>(0)
-  const [totalCumulativeCommissions, setTotalCumulativeCommissions] = useState<number>(0)
+  const [totalCumulativeRevenue, setTotalCumulativeRevenue] = useState<number>(0)
 
   // Fonction pour récupérer les données avec retry
   const fetchWithRetry = async (url: string, retries = 3, delay = 1000) => {
@@ -50,7 +49,7 @@ export default function EarningsSummary() {
     }
   }
 
-  // Modifier la fonction fetchData pour récupérer aussi les commissions d'affiliation
+  // Modifier la fonction fetchData pour s'assurer qu'elle récupère bien tous les revenus cumulés
   const fetchData = useCallback(
     async (isRefresh = false) => {
       if (!user) return
@@ -68,7 +67,10 @@ export default function EarningsSummary() {
         const [balanceResult, earningsResult, statsResult] = await Promise.allSettled([
           fetchWithRetry(`/api/user/balance?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`),
           fetchWithRetry(`/api/user/earnings?userId=${user.id}&period=week${isRefresh ? "&skipCache=true" : ""}`),
-          fetchWithRetry(`/api/user/dashboard-stats?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`),
+          // Ajouter un paramètre pour forcer la récupération de tous les revenus
+          fetchWithRetry(
+            `/api/user/dashboard-stats?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}&includeTotal=true&allTime=true`,
+          ),
         ])
 
         console.log("Résultats des requêtes:", {
@@ -112,23 +114,28 @@ export default function EarningsSummary() {
         // Récupérer les commissions d'affiliation depuis les stats
         if (statsResult.status === "fulfilled" && statsResult.value.success) {
           const statsData = statsResult.value.data
+          console.log("Données de stats reçues:", statsData)
+
           if (statsData) {
+            // IMPORTANT: Utiliser directement totalCumulative pour les revenus totaux
+            if (typeof statsData.totalCumulative !== "undefined") {
+              console.log("Total cumulatif des revenus depuis l'API:", statsData.totalCumulative)
+              setTotalCumulativeRevenue(statsData.totalCumulative)
+            } else if (
+              typeof statsData.totalEarnings !== "undefined" &&
+              typeof statsData.totalCommissions !== "undefined"
+            ) {
+              const calculatedTotal = statsData.totalEarnings + statsData.totalCommissions
+              console.log("Total cumulatif calculé:", calculatedTotal)
+              setTotalCumulativeRevenue(calculatedTotal)
+            }
+
             // Mettre à jour les commissions d'affiliation
             if (typeof statsData.affiliateCommissions !== "undefined") {
               setAffiliateCommissions(statsData.affiliateCommissions)
             }
-
-            // Mettre à jour les revenus cumulés
-            if (typeof statsData.totalEarnings !== "undefined") {
-              setTotalCumulativeEarnings(statsData.totalEarnings)
-            }
-
-            if (typeof statsData.totalCommissions !== "undefined") {
-              setTotalCumulativeCommissions(statsData.totalCommissions)
-            }
           }
         }
-
         // Récupérer spécifiquement les revenus d'aujourd'hui sans forcer la génération
         try {
           const today = new Date().toISOString().split("T")[0]
@@ -157,25 +164,17 @@ export default function EarningsSummary() {
     [user],
   )
 
-  // Ajouter un log pour vérifier les valeurs
   useEffect(() => {
     // Effet pour charger les données au montage
     fetchData()
 
-    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute (au lieu de 5)
+    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute
     const intervalId = setInterval(
       () => {
         fetchData(true)
       },
       1 * 60 * 1000,
     )
-
-    // Log pour vérifier les valeurs
-    console.log("EarningsSummary mounted with values:", {
-      totalCumulativeEarnings,
-      totalCumulativeCommissions,
-      total: totalCumulativeEarnings + totalCumulativeCommissions,
-    })
 
     return () => clearInterval(intervalId)
   }, [fetchData])
@@ -207,9 +206,6 @@ export default function EarningsSummary() {
     // Rediriger vers la page de retrait
     router.push("/dashboard/withdrawals")
   }
-
-  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
-  const totalRevenue = todayEarnings + affiliateCommissions
 
   // Fonction pour rendre le graphique des revenus quotidiens
   const renderEarningsChart = () => {
@@ -274,12 +270,6 @@ export default function EarningsSummary() {
     )
   }
 
-  console.log("EarningsSummary component values:", {
-    totalCumulativeEarnings,
-    totalCumulativeCommissions,
-    total: totalCumulativeEarnings + totalCumulativeCommissions,
-  })
-
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card className="col-span-1 md:col-span-2">
@@ -323,17 +313,15 @@ export default function EarningsSummary() {
             </div>
 
             <div className="rounded-lg border p-4 bg-primary/10">
-              <h3 className="font-medium">Total des revenus cumulés</h3>
+              <h3 className="font-medium">Revenus Totaux</h3>
               {isLoading ? (
                 <Skeleton className="h-8 w-24 mt-2" />
               ) : (
-                <p className="mt-2 text-xl font-bold text-primary">
-                  {formatCurrency(totalCumulativeEarnings + totalCumulativeCommissions)}
-                </p>
+                <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalCumulativeRevenue)}</p>
               )}
               <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                <span>Aujourd'hui: {formatCurrency(todayEarnings + affiliateCommissions)}</span>
-                <span>Total cumulé: {formatCurrency(totalCumulativeEarnings + totalCumulativeCommissions)}</span>
+                <span>Revenus quotidiens: {formatCurrency(todayEarnings)}</span>
+                <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
               </div>
             </div>
 

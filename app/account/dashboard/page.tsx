@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const { user } = useAuth()
   const [totalCumulativeRevenue, setTotalCumulativeRevenue] = useState<number>(0)
 
-  // Modifier la fonction fetchStats pour s'assurer que totalCumulativeRevenue est correctement calculé
+  // Modifier la fonction fetchStats pour s'assurer qu'elle récupère bien tous les revenus cumulés
   const fetchStats = useCallback(
     async (isRefresh = false) => {
       if (!user) return
@@ -35,9 +35,10 @@ export default function DashboardPage() {
         await new Promise((resolve) => setTimeout(resolve, 100))
 
         // Récupérer les statistiques du tableau de bord
+        // Ajouter un paramètre pour forcer la récupération de tous les revenus
         console.log(`Récupération des statistiques du tableau de bord pour l'utilisateur ${user.id}...`)
         const statsResponse = await fetch(
-          `/api/user/dashboard-stats?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}`,
+          `/api/user/dashboard-stats?userId=${user.id}${isRefresh ? "&skipCache=true" : ""}&includeTotal=true&allTime=true`,
         )
 
         if (!statsResponse.ok) {
@@ -51,48 +52,21 @@ export default function DashboardPage() {
         if (statsData.success) {
           // Stocker les statistiques de base
           const baseStats = statsData.data
+          setStats(baseStats)
 
-          // Utiliser directement totalCumulative s'il est disponible, sinon calculer
+          // CORRECTION: Toujours utiliser le total cumulatif pour les revenus totaux
+          // et non les revenus quotidiens
           if (baseStats.totalCumulative !== undefined) {
+            console.log("Total cumulatif des revenus depuis l'API:", baseStats.totalCumulative)
             setTotalCumulativeRevenue(baseStats.totalCumulative)
-            console.log("Total cumulative revenue from API:", baseStats.totalCumulative)
           } else if (baseStats.totalEarnings !== undefined && baseStats.totalCommissions !== undefined) {
-            setTotalCumulativeRevenue(baseStats.totalEarnings + baseStats.totalCommissions)
-            console.log("Total cumulative revenue calculated:", baseStats.totalEarnings + baseStats.totalCommissions)
-          }
-
-          // Récupérer spécifiquement les revenus quotidiens sans forcer la génération
-          const today = new Date().toISOString().split("T")[0]
-          console.log(`Récupération des revenus quotidiens pour ${today}...`)
-          const earningsResponse = await fetch(
-            `/api/user/daily-earnings?userId=${user.id}&date=${today}${isRefresh ? "&skipCache=true" : ""}`,
-          )
-
-          if (!earningsResponse.ok) {
-            console.error(`Erreur HTTP revenus: ${earningsResponse.status}, ${await earningsResponse.text()}`)
-          }
-
-          if (earningsResponse.ok) {
-            const earningsData = await earningsResponse.json()
-            console.log("Données de revenus quotidiens reçues:", earningsData)
-
-            if (earningsData.success) {
-              // Mettre à jour les stats avec les revenus quotidiens
-              const updatedStats = {
-                ...baseStats,
-                dailyEarnings: earningsData.data || 0,
-              }
-              console.log("Stats mises à jour avec les revenus quotidiens:", updatedStats)
-              setStats(updatedStats)
-            } else {
-              // Si l'API des revenus échoue, utiliser quand même les stats de base
-              console.warn("Erreur dans les données de revenus, utilisation des stats de base:", earningsData.error)
-              setStats(baseStats)
-            }
+            const calculatedTotal = baseStats.totalEarnings + baseStats.totalCommissions
+            console.log("Total cumulatif calculé:", calculatedTotal)
+            setTotalCumulativeRevenue(calculatedTotal)
           } else {
-            // Si la requête échoue, utiliser quand même les stats de base
-            console.warn(`Erreur HTTP revenus: ${earningsResponse.status}, utilisation des stats de base`)
-            setStats(baseStats)
+            // Fallback au cas où aucune donnée n'est disponible
+            console.log("Aucune donnée de revenus cumulés disponible, utilisation de 0")
+            setTotalCumulativeRevenue(0)
           }
         } else {
           console.error("Erreur lors de la récupération des statistiques:", statsData.error)
@@ -110,7 +84,7 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchStats()
 
-    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute (au lieu de 5)
+    // Configurer un intervalle pour rafraîchir les données toutes les 1 minute
     const intervalId = setInterval(
       () => {
         fetchStats(true)
@@ -143,9 +117,6 @@ export default function DashboardPage() {
     fetchStats(true)
   }
 
-  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
-  const totalRevenue = stats ? (stats.dailyEarnings || 0) + (stats.affiliateCommissions || 0) : 0
-
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -164,18 +135,9 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenus Totaux</CardTitle>
+            <CardTitle className="text-sm font-medium">Total des revenus cumulés</CardTitle>
             <LineChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24" />
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{formatCurrency(totalCumulativeRevenue)}</div>
-              </>
-            )}
-          </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

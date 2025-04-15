@@ -7,7 +7,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get("userId")
-    const period = searchParams.get("period") || "month" // day, week, month, year
+    const period = searchParams.get("period") || "month" // day, week, month, year, all
+    const allTime = searchParams.get("allTime") === "true"
 
     if (!userId) {
       return NextResponse.json({ success: false, error: "ID utilisateur manquant" }, { status: 400 })
@@ -20,26 +21,35 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     let startDate: Date
 
-    switch (period) {
-      case "day":
-        // Pour la période "day", on prend juste aujourd'hui
-        startDate = new Date(now)
-        startDate.setHours(0, 0, 0, 0)
+    // Si allTime est true ou period est "all", on récupère tous les revenus
+    if (allTime || period === "all") {
+      // Date très ancienne pour récupérer tous les revenus
+      startDate = new Date(2000, 0, 1)
 
-        // Ajouter un log pour déboguer
-        console.log(`Période "day" - startDate:`, startDate.toISOString())
-        break
-      case "week":
-        const day = now.getDay()
-        startDate = new Date(now.setDate(now.getDate() - day))
-        startDate.setHours(0, 0, 0, 0)
-        break
-      case "year":
-        startDate = new Date(now.getFullYear(), 0, 1)
-        break
-      case "month":
-      default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      // Ajouter un log pour déboguer
+      console.log(`Mode ALL TIME activé - startDate:`, startDate.toISOString())
+    } else {
+      switch (period) {
+        case "day":
+          // Pour la période "day", on prend juste aujourd'hui
+          startDate = new Date(now)
+          startDate.setHours(0, 0, 0, 0)
+
+          // Ajouter un log pour déboguer
+          console.log(`Période "day" - startDate:`, startDate.toISOString())
+          break
+        case "week":
+          const day = now.getDay()
+          startDate = new Date(now.setDate(now.getDate() - day))
+          startDate.setHours(0, 0, 0, 0)
+          break
+        case "year":
+          startDate = new Date(now.getFullYear(), 0, 1)
+          break
+        case "month":
+        default:
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      }
     }
 
     // Récupérer les revenus pour la période spécifiée

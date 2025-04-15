@@ -9,12 +9,17 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get("userId")
     const skipCache = searchParams.get("skipCache") === "true"
+    // Forcer ces valeurs à true pour toujours récupérer les totaux cumulés
+    const includeTotal = true
+    const allTime = true
 
     if (!userId) {
       return NextResponse.json({ success: false, error: "ID utilisateur manquant" }, { status: 400 })
     }
 
-    console.log(`Récupération des statistiques pour l'utilisateur ${userId}`)
+    console.log(
+      `Récupération des statistiques pour l'utilisateur ${userId}, includeTotal=${includeTotal}, allTime=${allTime}`,
+    )
 
     // Créer un client Supabase pour les Route Handlers
     const supabase = createRouteHandlerClient<Database>({ cookies })
@@ -54,17 +59,6 @@ export async function GET(request: NextRequest) {
         .eq("user_id", userId)
         .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
     ])
-
-    console.log("Résultats des requêtes:", {
-      balanceError: balanceResult.error,
-      balanceCount: balanceResult.data?.length,
-      purchasesError: purchasesResult.error,
-      purchasesCount: purchasesResult.data?.length,
-      affiliateError: affiliateResult.error,
-      affiliateCount: affiliateResult.data?.length,
-      earningsError: earningsResult.error,
-      earningsCount: earningsResult.data?.length,
-    })
 
     // Calculer le solde
     let available = 0
@@ -108,25 +102,39 @@ export async function GET(request: NextRequest) {
 
     const totalInvested = purchasesData ? purchasesData.reduce((sum, p) => sum + Number(p.amount), 0) : 0
 
-    // S'assurer que le calcul du total est correct et explicite
-    // Calculer les revenus totaux cumulés (tous les revenus depuis le début)
+    // IMPORTANT: Calculer les revenus totaux cumulés (tous les revenus depuis le début)
+    // Récupérer TOUS les revenus (pas seulement ceux des dernières 24h)
     const { data: allEarnings, error: allEarningsError } = await supabase
       .from("earnings")
       .select("amount")
       .eq("user_id", userId)
+    // Aucune limite temporelle ici pour récupérer tous les revenus
 
+    console.log(`Récupération de TOUS les revenus pour ${userId}:`, {
+      count: allEarnings?.length || 0,
+      error: allEarningsError?.message,
+    })
+
+    // Récupérer TOUTES les commissions (pas seulement celles des dernières 24h)
     const { data: allCommissions, error: allCommissionsError } = await supabase
       .from("affiliate_commissions")
       .select("amount")
       .eq("user_id", userId)
+    // Aucune limite temporelle ici pour récupérer toutes les commissions
 
+    console.log(`Récupération de TOUTES les commissions pour ${userId}:`, {
+      count: allCommissions?.length || 0,
+      error: allCommissionsError?.message,
+    })
+
+    // Calculer le total cumulatif des revenus
     let totalCumulativeEarnings = 0
-    let totalCumulativeCommissions = 0
-
     if (!allEarningsError && allEarnings) {
       totalCumulativeEarnings = allEarnings.reduce((sum, item) => sum + Number(item.amount), 0)
     }
 
+    // Calculer le total cumulatif des commissions
+    let totalCumulativeCommissions = 0
     if (!allCommissionsError && allCommissions) {
       totalCumulativeCommissions = allCommissions.reduce((sum, item) => sum + Number(item.amount), 0)
     }
@@ -136,6 +144,14 @@ export async function GET(request: NextRequest) {
 
     // Log détaillé pour le débogage
     console.log("API calculated values:", {
+      totalCumulativeEarnings,
+      totalCumulativeCommissions,
+      totalCumulative,
+    })
+
+    // Après le calcul de totalCumulative
+    console.log(`IMPORTANT - Valeurs calculées pour l'utilisateur ${userId}:`, {
+      dailyEarnings,
       totalCumulativeEarnings,
       totalCumulativeCommissions,
       totalCumulative,
@@ -151,10 +167,10 @@ export async function GET(request: NextRequest) {
       purchasesCount: purchasesResult.error ? 0 : purchasesResult.data.length,
       affiliateCommissions,
       dailyEarnings,
-      // Ajouter les revenus cumulés de manière explicite
+      // CORRECTION: Toujours inclure le total cumulatif dans la réponse
       totalEarnings: totalCumulativeEarnings,
       totalCommissions: totalCumulativeCommissions,
-      totalCumulative: totalCumulative, // Valeur explicite pour le total
+      totalCumulative: totalCumulative, // Cette valeur doit être utilisée pour "Revenus Totaux"
     }
 
     console.log(`Statistiques calculées pour l'utilisateur ${userId}:`, responseData)

@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Wallet, ArrowUpRight, Clock, AlertCircle, RefreshCw } from "lucide-react"
+import { Wallet, ArrowUpRight, Clock, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { getUserBalance } from "@/lib/services/earnings-service"
@@ -25,8 +24,7 @@ export default function BalanceSection() {
   const [error, setError] = useState<string | null>(null)
   const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const [dailyEarnings, setDailyEarnings] = useState<number>(0)
-  const [totalCumulativeEarnings, setTotalCumulativeEarnings] = useState<number>(0)
-  const [totalCumulativeCommissions, setTotalCumulativeCommissions] = useState<number>(0)
+  const [totalCumulativeRevenue, setTotalCumulativeRevenue] = useState<number>(0)
   const { user } = useAuth()
 
   const fetchBalance = useCallback(
@@ -75,27 +73,43 @@ export default function BalanceSection() {
 
         // Récupérer les commissions d'affiliation et les revenus quotidiens
         try {
-          const statsResponse = await fetch(`/api/user/dashboard-stats?userId=${user.id}`)
+          // Ajouter un paramètre pour forcer la récupération de tous les revenus
+          const statsResponse = await fetch(
+            `/api/user/dashboard-stats?userId=${user.id}&includeTotal=true&allTime=true`,
+          )
           if (statsResponse.ok) {
             const statsData = await statsResponse.json()
             if (statsData.success) {
-              setAffiliateCommissions(statsData.data.affiliateCommissions || 0)
-              setTotalCumulativeEarnings(statsData.data.totalEarnings || 0)
-              setTotalCumulativeCommissions(statsData.data.totalCommissions || 0)
+              // Ajoutons un log pour voir toutes les données reçues
+              console.log("Données complètes reçues dans balance-section:", statsData.data)
 
-              // Récupérer les revenus quotidiens
-              const today = new Date().toISOString().split("T")[0]
-              const earningsResponse = await fetch(`/api/user/daily-earnings?userId=${user.id}&date=${today}`)
-              if (earningsResponse.ok) {
-                const earningsData = await earningsResponse.json()
-                if (earningsData.success) {
-                  setDailyEarnings(earningsData.data || 0)
-                }
+              // Utiliser les revenus cumulés au lieu des revenus quotidiens
+              setDailyEarnings(statsData.data.dailyEarnings || 0)
+              setAffiliateCommissions(statsData.data.affiliateCommissions || 0)
+
+              // CORRECTION: S'assurer que nous utilisons toujours le total cumulatif
+              if (statsData.data.totalCumulative !== undefined) {
+                console.log(
+                  "Total cumulatif des revenus depuis l'API (balance-section):",
+                  statsData.data.totalCumulative,
+                )
+                // Ajoutons un log avant la mise à jour de l'état
+                console.log("Mise à jour de totalCumulativeRevenue avec:", statsData.data.totalCumulative)
+                setTotalCumulativeRevenue(statsData.data.totalCumulative)
+              } else {
+                // Fallback au calcul manuel
+                const totalEarnings = statsData.data.totalEarnings || 0
+                const totalCommissions = statsData.data.totalCommissions || 0
+                const calculatedTotal = totalEarnings + totalCommissions
+                console.log("Total cumulatif calculé manuellement (balance-section):", calculatedTotal)
+                // Ajoutons un log avant la mise à jour de l'état
+                console.log("Mise à jour de totalCumulativeRevenue avec (calculé):", calculatedTotal)
+                setTotalCumulativeRevenue(calculatedTotal)
               }
             }
           }
         } catch (error) {
-          console.error("Error fetching additional data:", error)
+          console.error("Erreur lors de la récupération des revenus cumulés:", error)
         }
       } catch (error: any) {
         console.error("Error fetching balance:", error)
@@ -120,69 +134,6 @@ export default function BalanceSection() {
 
     return () => clearInterval(intervalId)
   }, [fetchBalance])
-
-  // Calculer le total des revenus quotidiens (revenus quotidiens + commissions d'affiliation du jour)
-  const dailyTotalRevenue = dailyEarnings + affiliateCommissions
-
-  // Calculer le total des revenus cumulés (tous les revenus depuis le début)
-  const totalCumulativeRevenue = totalCumulativeEarnings + totalCumulativeCommissions
-
-  if (isLoading && !isRefreshing) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
-            Solde du compte
-          </CardTitle>
-          <CardDescription>Gérez votre solde et vos transactions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Skeleton className="h-12 w-40" />
-            <div className="flex justify-between">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-            <Skeleton className="h-10 w-full" />
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
-            Solde du compte
-          </CardTitle>
-          <CardDescription>Gérez votre solde et vos transactions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <AlertCircle className="h-10 w-10 text-amber-500 mb-2" />
-            <p className="mb-4 text-muted-foreground">{error}</p>
-            <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isRefreshing}>
-              {isRefreshing ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Rafraîchissement...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Réessayer
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <Card>
@@ -218,24 +169,9 @@ export default function BalanceSection() {
             </div>
           </div>
 
-          {/* Nouvelle section pour afficher les revenus totaux cumulés */}
-          <div className="rounded-lg border p-4 bg-primary/10">
-            <h3 className="font-medium">Revenus totaux cumulés</h3>
-            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalCumulativeRevenue)}</p>
-            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              <span>Revenus: {formatCurrency(totalCumulativeEarnings)}</span>
-              <span>Commissions: {formatCurrency(totalCumulativeCommissions)}</span>
-            </div>
-          </div>
-
-          {/* Section pour afficher les revenus quotidiens */}
           <div className="rounded-lg border p-4">
-            <h3 className="font-medium">Revenus quotidiens (aujourd'hui)</h3>
-            <p className="mt-2 text-lg font-medium">{formatCurrency(dailyTotalRevenue)}</p>
-            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              <span>Revenus: {formatCurrency(dailyEarnings)}</span>
-              <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
-            </div>
+            <h3 className="font-medium">Total des revenus cumulés</h3>
+            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalCumulativeRevenue)}</p>
           </div>
 
           <div className="flex gap-2">

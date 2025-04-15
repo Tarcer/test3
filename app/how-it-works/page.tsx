@@ -112,10 +112,12 @@ export default function HowItWorksPage() {
               <h3 className="font-semibold">Guide d'utilisation : Acheter et Envoyer de la Cryptomonnaie avec Phantom Wallet</h3>
               <p className="mt-2 text-muted-foreground">
               • Étape 1 : Télécharger et Installer Phantom Wallet<br />
+              <br />
 1. Téléchargez l'application Phantom Wallet :<br />
    - Pour ordinateur : Rendez-vous sur [phantom.app](https://phantom.app) et téléchargez l'extension pour votre navigateur (Chrome, Firefox, Brave, etc.).<br />
    - Pour mobile : Allez sur l'App Store (iOS) ou le Google Play Store (Android) et recherchez "Phantom Wallet".<br />
               • Étape 2 : Créer un Nouveau Wallet<br />
+              <br />
 1. Lancez l'application Phantom et cliquez sur "Créer un nouveau wallet".<br />
 2. Suivez les instructions pour définir un mot de passe sécurisé. Ce mot de passe protège l'accès à votre wallet.<br />
 3. Notez votre phrase de récupération (Seed Phrase) :<br />
@@ -127,6 +129,7 @@ export default function HowItWorksPage() {
             <div>
               <p className="mt-2 text-muted-foreground">
               •  Étape 3 : Ajouter des Fonds à Votre Wallet<br />
+               <br />
 Il existe deux façons principales d'ajouter des cryptomonnaies à votre wallet :<br />
 
  Option 1 : Achat Direct via Phantom (Solana uniquement)<br />
