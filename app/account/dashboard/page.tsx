@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { LineChart, BarChart, PieChart, ShoppingBag, RefreshCw } from "lucide-react"
+import { BarChart, PieChart, ShoppingBag, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import RecentPurchases from "@/components/recent-purchases"
 import EarningsSummary from "@/components/earnings-summary"
@@ -17,7 +17,6 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const { user } = useAuth()
-  const [totalCumulativeRevenue, setTotalCumulativeRevenue] = useState<number>(0)
 
   // Modifier la fonction fetchStats pour s'assurer qu'elle récupère bien tous les revenus cumulés
   const fetchStats = useCallback(
@@ -54,20 +53,8 @@ export default function DashboardPage() {
           const baseStats = statsData.data
           setStats(baseStats)
 
-          // CORRECTION: Toujours utiliser le total cumulatif pour les revenus totaux
-          // et non les revenus quotidiens
-          if (baseStats.totalCumulative !== undefined) {
-            console.log("Total cumulatif des revenus depuis l'API:", baseStats.totalCumulative)
-            setTotalCumulativeRevenue(baseStats.totalCumulative)
-          } else if (baseStats.totalEarnings !== undefined && baseStats.totalCommissions !== undefined) {
-            const calculatedTotal = baseStats.totalEarnings + baseStats.totalCommissions
-            console.log("Total cumulatif calculé:", calculatedTotal)
-            setTotalCumulativeRevenue(calculatedTotal)
-          } else {
-            // Fallback au cas où aucune donnée n'est disponible
-            console.log("Aucune donnée de revenus cumulés disponible, utilisation de 0")
-            setTotalCumulativeRevenue(0)
-          }
+          // Ajoutons un log détaillé pour voir toutes les valeurs reçues
+          console.log("Données complètes reçues de l'API:", baseStats)
         } else {
           console.error("Erreur lors de la récupération des statistiques:", statsData.error)
         }
@@ -132,13 +119,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total des revenus cumulés</CardTitle>
-            <LineChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenus Quotidiens</CardTitle>

@@ -64,6 +64,37 @@ export async function getUserBalance(userId: string, readOnly = false) {
 
     const totalInvested = validPurchases.reduce((sum, p) => sum + Number(p.amount), 0)
 
+    // Récupérer les revenus totaux (tous les revenus quotidiens + commissions)
+    // Récupérer tous les revenus quotidiens
+    const { data: allEarnings, error: earningsError } = await supabase
+      .from("earnings")
+      .select("amount")
+      .eq("user_id", userId)
+
+    if (earningsError) {
+      console.error("Error getting user earnings:", earningsError)
+      // Ne pas échouer l'opération complète
+    }
+
+    // Récupérer toutes les commissions d'affiliation
+    const { data: allCommissions, error: commissionsError } = await supabase
+      .from("affiliate_commissions")
+      .select("amount")
+      .eq("user_id", userId)
+
+    if (commissionsError) {
+      console.error("Error getting user commissions:", commissionsError)
+      // Ne pas échouer l'opération complète
+    }
+
+    // Calculer les revenus totaux
+    const totalEarnings = allEarnings ? allEarnings.reduce((sum, item) => sum + Number(item.amount), 0) : 0
+    const totalCommissions = allCommissions ? allCommissions.reduce((sum, item) => sum + Number(item.amount), 0) : 0
+    const totalRevenue = totalEarnings + totalCommissions
+
+    // Ajouter les revenus totaux au solde disponible
+    available += totalRevenue
+
     return {
       success: true,
       data: {
@@ -71,6 +102,9 @@ export async function getUserBalance(userId: string, readOnly = false) {
         deposits,
         purchases,
         totalInvested,
+        totalRevenue,
+        totalEarnings,
+        totalCommissions,
       },
     }
   } catch (error: any) {

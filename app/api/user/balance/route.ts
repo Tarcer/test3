@@ -134,47 +134,28 @@ export async function GET(request: NextRequest) {
         return total
       }, 0)
 
-      // NOUVEAU: Récupérer les revenus quotidiens pour aujourd'hui
-      const today = new Date()
-      const startOfDay = new Date(today)
-      startOfDay.setHours(0, 0, 0, 0)
-      const endOfDay = new Date(today)
-      endOfDay.setHours(23, 59, 59, 999)
+      // Récupérer les statistiques du tableau de bord pour obtenir les revenus totaux
+      const statsResponse = await fetch(
+        `${request.nextUrl.origin}/api/user/dashboard-stats?userId=${userId}&includeTotal=true&allTime=true`,
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        },
+      )
 
-      // Récupérer les revenus quotidiens
-      const { data: earnings, error: earningsError } = await supabase
-        .from("earnings")
-        .select("amount")
-        .eq("user_id", userId)
-        .gte("created_at", startOfDay.toISOString())
-        .lte("created_at", endOfDay.toISOString())
-
-      if (!earningsError) {
-        const dailyEarnings = earnings.reduce((sum, item) => sum + Number(item.amount), 0)
-        console.log(`Revenus quotidiens pour ${userId}: ${dailyEarnings}`)
-
-        // Ajouter les revenus quotidiens au solde
-        balance += dailyEarnings
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json()
+        if (statsData.success) {
+          // Ajouter les revenus totaux au solde
+          const totalCumulative = statsData.data.totalCumulative || 0
+          console.log(`Ajout des revenus totaux (${totalCumulative}) au solde (${balance})`)
+          balance += totalCumulative
+        } else {
+          console.warn("Erreur lors de la récupération des revenus totaux:", statsData.error)
+        }
       } else {
-        console.warn("Erreur lors de la récupération des revenus quotidiens:", earningsError)
-      }
-
-      // Récupérer les commissions d'affiliation pour aujourd'hui
-      const { data: commissions, error: commissionsError } = await supabase
-        .from("affiliate_commissions")
-        .select("amount")
-        .eq("user_id", userId)
-        .gte("created_at", startOfDay.toISOString())
-        .lte("created_at", endOfDay.toISOString())
-
-      if (!commissionsError) {
-        const affiliateCommissions = commissions.reduce((sum, item) => sum + Number(item.amount), 0)
-        console.log(`Commissions d'affiliation pour ${userId}: ${affiliateCommissions}`)
-
-        // Ajouter les commissions d'affiliation au solde
-        balance += affiliateCommissions
-      } else {
-        console.warn("Erreur lors de la récupération des commissions d'affiliation:", commissionsError)
+        console.warn(`Erreur HTTP lors de la récupération des revenus totaux: ${statsResponse.status}`)
       }
 
       // Mettre à jour le cache avec le solde total (incluant revenus et commissions)

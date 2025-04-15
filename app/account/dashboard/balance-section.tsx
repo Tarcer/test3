@@ -18,13 +18,13 @@ export default function BalanceSection() {
     available: number
     deposits: number
     purchases: number
+    totalRevenue?: number
   } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const [dailyEarnings, setDailyEarnings] = useState<number>(0)
-  const [totalCumulativeRevenue, setTotalCumulativeRevenue] = useState<number>(0)
   const { user } = useAuth()
 
   const fetchBalance = useCallback(
@@ -86,26 +86,6 @@ export default function BalanceSection() {
               // Utiliser les revenus cumulés au lieu des revenus quotidiens
               setDailyEarnings(statsData.data.dailyEarnings || 0)
               setAffiliateCommissions(statsData.data.affiliateCommissions || 0)
-
-              // CORRECTION: S'assurer que nous utilisons toujours le total cumulatif
-              if (statsData.data.totalCumulative !== undefined) {
-                console.log(
-                  "Total cumulatif des revenus depuis l'API (balance-section):",
-                  statsData.data.totalCumulative,
-                )
-                // Ajoutons un log avant la mise à jour de l'état
-                console.log("Mise à jour de totalCumulativeRevenue avec:", statsData.data.totalCumulative)
-                setTotalCumulativeRevenue(statsData.data.totalCumulative)
-              } else {
-                // Fallback au calcul manuel
-                const totalEarnings = statsData.data.totalEarnings || 0
-                const totalCommissions = statsData.data.totalCommissions || 0
-                const calculatedTotal = totalEarnings + totalCommissions
-                console.log("Total cumulatif calculé manuellement (balance-section):", calculatedTotal)
-                // Ajoutons un log avant la mise à jour de l'état
-                console.log("Mise à jour de totalCumulativeRevenue avec (calculé):", calculatedTotal)
-                setTotalCumulativeRevenue(calculatedTotal)
-              }
             }
           }
         } catch (error) {
@@ -169,9 +149,10 @@ export default function BalanceSection() {
             </div>
           </div>
 
-          <div className="rounded-lg border p-4">
-            <h3 className="font-medium">Total des revenus cumulés</h3>
-            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalCumulativeRevenue)}</p>
+          {/* Ajout de l'affichage des revenus totaux */}
+          <div className="rounded-lg border p-3 bg-primary/5">
+            <p className="text-sm text-muted-foreground">Revenus Totaux (inclus dans le solde)</p>
+            <p className="font-medium">{formatCurrency(balance?.totalRevenue || 0)}</p>
           </div>
 
           <div className="flex gap-2">
