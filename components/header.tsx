@@ -74,8 +74,9 @@ export default function Header() {
   }
 
   // Modifier la classe du header pour améliorer l'affichage sur mobile
+  // Remplacer la section du header par cette version optimisée pour mobile
   return (
-    <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm top-0">
+    <header className="fixed left-0 right-0 z-50 w-full border-b bg-background shadow-sm" style={{ top: 0 }}>
       <div className="container flex h-14 md:h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Button

@@ -56,24 +56,21 @@
   padding: 0;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
 }
 
 /* Styles pour les scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--secondary)) hsl(var(--muted));
 }
 
 *::-webkit-scrollbar {
@@ -81,38 +78,13 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background-color: hsl(var(--muted));
+  background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--secondary));
+  background-color: rgba(0, 0, 0, 0.2);
   border-radius: 0.5rem;
-}
-
-/* Ajustements pour mobile */
-@media (max-width: 640px) {
-  .container {
-    padding-bottom: 5rem;
-  }
-
-  body {
-    padding-top: 0;
-  }
-
-  main {
-    padding-top: 3.5rem !important;
-  }
-
-  footer {
-    position: relative;
-    margin-top: 2rem;
-  }
-
-  header {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
 }
 
 /* Styles pour les inputs */
@@ -125,7 +97,7 @@ select {
 }
 
 /* Styles pour le header fixe */
-.fixed {
+header.fixed {
   position: fixed;
   width: 100%;
   top: 0;
@@ -134,44 +106,15 @@ select {
   z-index: 50;
 }
 
+/* Styles pour le contenu principal */
+main {
+  min-height: calc(100vh - 56px);
+}
+
 /* Styles pour iOS */
-@media screen and (max-width: 640px) {
-  .fixed {
-    padding-top: env(safe-area-inset-top, 0);
-  }
-
-  main {
-    padding-top: calc(3.5rem + env(safe-area-inset-top, 0)) !important;
-  }
-
+@supports (-webkit-touch-callout: none) {
   body {
-    width: 100%;
-    overflow-x: hidden;
-    position: relative;
+    /* Prévenir le pull-to-refresh sur iOS */
+    overscroll-behavior-y: none;
   }
-}
-
-/* Styles pour les éléments flex */
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.flex-row {
-  flex-direction: row;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
 }
