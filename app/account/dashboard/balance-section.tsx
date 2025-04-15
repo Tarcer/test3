@@ -25,6 +25,8 @@ export default function BalanceSection() {
   const [error, setError] = useState<string | null>(null)
   const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const [dailyEarnings, setDailyEarnings] = useState<number>(0)
+  const [totalCumulativeEarnings, setTotalCumulativeEarnings] = useState<number>(0)
+  const [totalCumulativeCommissions, setTotalCumulativeCommissions] = useState<number>(0)
   const { user } = useAuth()
 
   const fetchBalance = useCallback(
@@ -78,6 +80,8 @@ export default function BalanceSection() {
             const statsData = await statsResponse.json()
             if (statsData.success) {
               setAffiliateCommissions(statsData.data.affiliateCommissions || 0)
+              setTotalCumulativeEarnings(statsData.data.totalEarnings || 0)
+              setTotalCumulativeCommissions(statsData.data.totalCommissions || 0)
 
               // Récupérer les revenus quotidiens
               const today = new Date().toISOString().split("T")[0]
@@ -117,8 +121,11 @@ export default function BalanceSection() {
     return () => clearInterval(intervalId)
   }, [fetchBalance])
 
-  // Calculer le total des revenus (revenus quotidiens + commissions d'affiliation)
-  const totalRevenue = dailyEarnings + affiliateCommissions
+  // Calculer le total des revenus quotidiens (revenus quotidiens + commissions d'affiliation du jour)
+  const dailyTotalRevenue = dailyEarnings + affiliateCommissions
+
+  // Calculer le total des revenus cumulés (tous les revenus depuis le début)
+  const totalCumulativeRevenue = totalCumulativeEarnings + totalCumulativeCommissions
 
   if (isLoading && !isRefreshing) {
     return (
@@ -211,12 +218,22 @@ export default function BalanceSection() {
             </div>
           </div>
 
-          {/* Nouvelle section pour afficher les revenus totaux */}
+          {/* Nouvelle section pour afficher les revenus totaux cumulés */}
           <div className="rounded-lg border p-4 bg-primary/10">
-            <h3 className="font-medium">Revenus totaux (quotidiens + commissions)</h3>
-            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
+            <h3 className="font-medium">Revenus totaux cumulés</h3>
+            <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalCumulativeRevenue)}</p>
             <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              <span>Quotidiens: {formatCurrency(dailyEarnings)}</span>
+              <span>Revenus: {formatCurrency(totalCumulativeEarnings)}</span>
+              <span>Commissions: {formatCurrency(totalCumulativeCommissions)}</span>
+            </div>
+          </div>
+
+          {/* Section pour afficher les revenus quotidiens */}
+          <div className="rounded-lg border p-4">
+            <h3 className="font-medium">Revenus quotidiens (aujourd'hui)</h3>
+            <p className="mt-2 text-lg font-medium">{formatCurrency(dailyTotalRevenue)}</p>
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+              <span>Revenus: {formatCurrency(dailyEarnings)}</span>
               <span>Commissions: {formatCurrency(affiliateCommissions)}</span>
             </div>
           </div>

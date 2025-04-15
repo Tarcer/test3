@@ -108,6 +108,39 @@ export async function GET(request: NextRequest) {
 
     const totalInvested = purchasesData ? purchasesData.reduce((sum, p) => sum + Number(p.amount), 0) : 0
 
+    // S'assurer que le calcul du total est correct et explicite
+    // Calculer les revenus totaux cumulés (tous les revenus depuis le début)
+    const { data: allEarnings, error: allEarningsError } = await supabase
+      .from("earnings")
+      .select("amount")
+      .eq("user_id", userId)
+
+    const { data: allCommissions, error: allCommissionsError } = await supabase
+      .from("affiliate_commissions")
+      .select("amount")
+      .eq("user_id", userId)
+
+    let totalCumulativeEarnings = 0
+    let totalCumulativeCommissions = 0
+
+    if (!allEarningsError && allEarnings) {
+      totalCumulativeEarnings = allEarnings.reduce((sum, item) => sum + Number(item.amount), 0)
+    }
+
+    if (!allCommissionsError && allCommissions) {
+      totalCumulativeCommissions = allCommissions.reduce((sum, item) => sum + Number(item.amount), 0)
+    }
+
+    // Calculer explicitement le total cumulatif
+    const totalCumulative = totalCumulativeEarnings + totalCumulativeCommissions
+
+    // Log détaillé pour le débogage
+    console.log("API calculated values:", {
+      totalCumulativeEarnings,
+      totalCumulativeCommissions,
+      totalCumulative,
+    })
+
     const responseData = {
       balance: {
         available,
@@ -118,6 +151,10 @@ export async function GET(request: NextRequest) {
       purchasesCount: purchasesResult.error ? 0 : purchasesResult.data.length,
       affiliateCommissions,
       dailyEarnings,
+      // Ajouter les revenus cumulés de manière explicite
+      totalEarnings: totalCumulativeEarnings,
+      totalCommissions: totalCumulativeCommissions,
+      totalCumulative: totalCumulative, // Valeur explicite pour le total
     }
 
     console.log(`Statistiques calculées pour l'utilisateur ${userId}:`, responseData)

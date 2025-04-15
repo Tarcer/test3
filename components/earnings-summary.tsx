@@ -18,6 +18,8 @@ export default function EarningsSummary() {
   const [affiliateCommissions, setAffiliateCommissions] = useState<number>(0)
   const { user } = useAuth()
   const router = useRouter()
+  const [totalCumulativeEarnings, setTotalCumulativeEarnings] = useState<number>(0)
+  const [totalCumulativeCommissions, setTotalCumulativeCommissions] = useState<number>(0)
 
   // Fonction pour récupérer les données avec retry
   const fetchWithRetry = async (url: string, retries = 3, delay = 1000) => {
@@ -110,9 +112,20 @@ export default function EarningsSummary() {
         // Récupérer les commissions d'affiliation depuis les stats
         if (statsResult.status === "fulfilled" && statsResult.value.success) {
           const statsData = statsResult.value.data
-          if (statsData && typeof statsData.affiliateCommissions !== "undefined") {
-            setAffiliateCommissions(statsData.affiliateCommissions)
-            console.log("Commissions d'affiliation récupérées:", statsData.affiliateCommissions)
+          if (statsData) {
+            // Mettre à jour les commissions d'affiliation
+            if (typeof statsData.affiliateCommissions !== "undefined") {
+              setAffiliateCommissions(statsData.affiliateCommissions)
+            }
+
+            // Mettre à jour les revenus cumulés
+            if (typeof statsData.totalEarnings !== "undefined") {
+              setTotalCumulativeEarnings(statsData.totalEarnings)
+            }
+
+            if (typeof statsData.totalCommissions !== "undefined") {
+              setTotalCumulativeCommissions(statsData.totalCommissions)
+            }
           }
         }
 
@@ -144,8 +157,9 @@ export default function EarningsSummary() {
     [user],
   )
 
-  // Effet pour charger les données au montage
+  // Ajouter un log pour vérifier les valeurs
   useEffect(() => {
+    // Effet pour charger les données au montage
     fetchData()
 
     // Configurer un intervalle pour rafraîchir les données toutes les 1 minute (au lieu de 5)
@@ -155,6 +169,13 @@ export default function EarningsSummary() {
       },
       1 * 60 * 1000,
     )
+
+    // Log pour vérifier les valeurs
+    console.log("EarningsSummary mounted with values:", {
+      totalCumulativeEarnings,
+      totalCumulativeCommissions,
+      total: totalCumulativeEarnings + totalCumulativeCommissions,
+    })
 
     return () => clearInterval(intervalId)
   }, [fetchData])
@@ -253,6 +274,12 @@ export default function EarningsSummary() {
     )
   }
 
+  console.log("EarningsSummary component values:", {
+    totalCumulativeEarnings,
+    totalCumulativeCommissions,
+    total: totalCumulativeEarnings + totalCumulativeCommissions,
+  })
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card className="col-span-1 md:col-span-2">
@@ -296,12 +323,18 @@ export default function EarningsSummary() {
             </div>
 
             <div className="rounded-lg border p-4 bg-primary/10">
-              <h3 className="font-medium">Total des revenus</h3>
+              <h3 className="font-medium">Total des revenus cumulés</h3>
               {isLoading ? (
                 <Skeleton className="h-8 w-24 mt-2" />
               ) : (
-                <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
+                <p className="mt-2 text-xl font-bold text-primary">
+                  {formatCurrency(totalCumulativeEarnings + totalCumulativeCommissions)}
+                </p>
               )}
+              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                <span>Aujourd'hui: {formatCurrency(todayEarnings + affiliateCommissions)}</span>
+                <span>Total cumulé: {formatCurrency(totalCumulativeEarnings + totalCumulativeCommissions)}</span>
+              </div>
             </div>
 
             <Button onClick={handleWithdrawalRequest} disabled={isLoading}>
