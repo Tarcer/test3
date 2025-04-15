@@ -111,10 +111,21 @@ main {
   min-height: calc(100vh - 56px);
 }
 
-/* Styles pour iOS */
+/* Modifier la règle CSS qui bloque le défilement sur iOS */
 @supports (-webkit-touch-callout: none) {
   body {
-    /* Prévenir le pull-to-refresh sur iOS */
-    overscroll-behavior-y: none;
+    /* Supprimer cette ligne qui bloque complètement le défilement */
+    /* overscroll-behavior-y: none; */
+    /* Utiliser une approche plus douce qui permet le défilement mais limite le rebond */
+    -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Ajouter cette règle pour s'assurer que le contenu est défilable */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto; /* S'assurer que le défilement vertical est explicitement activé */
 }

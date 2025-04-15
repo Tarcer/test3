@@ -22,6 +22,7 @@ export default function ClientLayout({
   children: React.ReactNode
 }) {
   // Initialize event system
+  // Modifier le gestionnaire qui empêche le pull-to-refresh
   useEffect(() => {
     initializeTransactionEvents()
 
@@ -63,31 +64,32 @@ export default function ClientLayout({
     setVhProperty()
     window.addEventListener("resize", setVhProperty)
 
-    // Ajouter un gestionnaire pour éviter le pull-to-refresh sur iOS
-    const preventPullToRefresh = (e) => {
-      if (window.scrollY <= 0) {
-        e.preventDefault()
-      }
-    }
-
-    if (/iphone|ipad|ipod/.test(userAgent)) {
-      document.addEventListener("touchmove", preventPullToRefresh, { passive: false })
-    }
+    // Supprimer le gestionnaire qui bloque complètement le défilement
+    // const preventPullToRefresh = (e) => {
+    //   if (window.scrollY <= 0) {
+    //     e.preventDefault();
+    //   }
+    // };
+    //
+    // if (/iphone|ipad|ipod/.test(userAgent)) {
+    //   document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+    // }
 
     return () => {
       window.removeEventListener("resize", setVhProperty)
-      if (/iphone|ipad|ipod/.test(userAgent)) {
-        document.removeEventListener("touchmove", preventPullToRefresh)
-      }
+      // if (/iphone|ipad|ipod/.test(userAgent)) {
+      //   document.removeEventListener("touchmove", preventPullToRefresh);
+      // }
     }
   }, [])
 
+  // Modifier le style du main pour s'assurer qu'il est défilable
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <AuthProvider>
         <div className="flex min-h-screen flex-col overflow-x-hidden">
           <Header />
-          <main className="flex-1" style={{ paddingTop: "56px" }}>
+          <main className="flex-1" style={{ paddingTop: "56px", overflowY: "auto" }}>
             {children}
           </main>
           <Footer />

@@ -36,20 +36,28 @@ export default function Header() {
   // Gérer le scroll sur iOS pour éviter les problèmes avec le header fixe
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
-      // Permettre le scroll sauf si on est en haut de la page
-      if (window.scrollY <= 0) {
-        // Empêcher le pull-to-refresh sur iOS
-        const target = e.target as HTMLElement
-        if (!target.closest("main")) {
-          e.preventDefault()
-        }
+      // Ne bloquer le défilement que dans des cas très spécifiques
+      // Par exemple, uniquement sur le header lui-même, pas sur tout le document
+      const target = e.target as HTMLElement
+      const header = document.querySelector("header")
+
+      // Ne bloquer que si on est en haut de la page ET que le toucher commence dans le header
+      if (window.scrollY <= 0 && header && header.contains(target)) {
+        // Empêcher uniquement le pull-to-refresh, pas tout le défilement
+        e.preventDefault()
       }
     }
 
-    document.addEventListener("touchmove", handleTouchMove, { passive: false })
+    // Ajouter l'écouteur uniquement sur le header, pas sur tout le document
+    const header = document.querySelector("header")
+    if (header) {
+      header.addEventListener("touchmove", handleTouchMove, { passive: false })
+    }
 
     return () => {
-      document.removeEventListener("touchmove", handleTouchMove)
+      if (header) {
+        header.removeEventListener("touchmove", handleTouchMove)
+      }
     }
   }, [])
 
